@@ -48,7 +48,7 @@ h1{
     font-size:2.2rem;
     text-align:center;
     margin-bottom:20px;
-    background:linear-gradient(90deg,#00f5ff,#7c3aed,#ff3cac);
+    background:linear-gradient(90deg,#00f5ff,#92e8e7,#ff3cac);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 }
@@ -58,25 +58,6 @@ p{
     font-size:1.05rem;
     line-height:1.8;
     color:#141415;
-}
-
-/* Nút */
-button{
-    margin-top:20px;
-    padding:14px 30px;
-    border:none;
-    border-radius:50px;
-    background:linear-gradient(90deg,#06b6d4,#3b82f6);
-    color:white;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
-}
-
-button:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 20px #38bdf8;
 }
 
 /* Input */
@@ -112,32 +93,35 @@ textarea:focus{
     border-radius:15px;
     box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
+.button{
+    display:inline-block;
+    margin-top:20px;
+    padding:15px 35px;
+    background:linear-gradient(135deg,#00c6ff,#0072ff);
+    color:white;
+    font-size:18px;
+    font-weight:600;
+    text-decoration:none;
+    border-radius:50px;
+    box-shadow:0 8px 20px rgba(0,114,255,0.4);
+    transition:0.3s ease;
+}
 
-.images img{
-    width:300px;
-    height:300px;
-    object-fit:contain;
+/* Khi đưa chuột vào */
+.button:hover{
+    transform:translateY(-5px) scale(1.05);
+    background:linear-gradient(135deg,#0072ff,#00c6ff);
+    box-shadow:0 12px 30px rgba(0,198,255,0.6);
+}
+
+/* Khi bấm */
+.button:active{
+    transform:scale(0.95);
 }
 
 
 
-@media(max-width:768px){
-    h1{
-        font-size:1.7rem;
-    }
 
-    .container{
-        padding:20px;
-    }
-
-    p{
-        font-size:0.95rem;
-    }
-
-    button{
-        width:100%;
-    }
-}
 </style>
 
     </head>
@@ -180,7 +164,11 @@ textarea:focus{
     <p>
         Lớp 11: Đạt giải ba học sinh giỏi vòng tỉnh
     </p>
-
+    <h1> Thông tin liên hệ </h1>
+    <p> Email: <b>trandangphuocvinh@gmail.com</b> </p>
+    <p> Số điện thoại : <b>0919951334</b> </p>
+    <p> Zalo : <b>0919951334</b> </p>
+    <p><a class = "button" href="https://www.facebook.com/anhlavinhdepzai" target="_blank">Facebook</a></p>
 </div>
 
 </body>
