@@ -1,3 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trần Đặng Phước Vinh</title>
+
+<meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Poppins,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    padding:40px;
+    background:linear-gradient(135deg,#E3FDFD,#dcefff,#f8fbff);
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:40px;
+    border-radius:25px;
+    background:#cbf1f5;
+    box-shadow:0 10px 30px #0002;
+}
+
+
+/* PROFILE */
+
+.profile{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.profile h1{
+    font-size:40px;
+    color:#1f3b57;
+}
+
+.profile h3{
+    color:#5d7288;
+    font-weight:400;
+}
+
+
+/* CARD */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:30px;
+}
+
+.box{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 15px 30px #0002;
+    transition:.3s;
+}
+
+.box:hover{
+    transform:translateY(-8px);
+}
+
+.box h2{
+    text-align:center;
+    color:#75acb1;
+    margin-bottom:15px;
+}
+
+.box h2 i{
+    font-size:35px;
+    color:#73c2ef;
+    animation:float 2s infinite;
+}
+
+
+@keyframes float{
+    50%{
+        transform:translateY(-8px);
+    }
+}
+
+
+.box p{
+    color:#324b4d;
+    line-height:1.8;
+    margin:10px 0;
+}
+
+
+b{
+    color:#2d5d8c;
+}
+
+
+a{
+    color:#2d6ea3;
+    text-decoration:none;
+    font-weight:700;
+}
+
+a:hover{
+    color:#5aa9e8;
+}
+
+
+/* ACHIEVEMENT */
+
+.achievement{
+    list-style:none;
+}
+
+.achievement li{
+    background:#eef7ff;
+    padding:12px;
+    margin:10px 0;
+    border-left:5px solid #a0cdf2;
+    border-radius:10px;
+}
+
+
+/* BUTTON */
+
+.scroll-btn{
+    display:block;
+    margin:20px auto 0;
+    width:65px;
+    height:65px;
+    border:none;
+    border-radius:50%;
+    background:#73c2ef;
+    color:white;
+    font-size:30px;
+    cursor:pointer;
+    animation:bounce 1.5s infinite;
+}
+
+
+@keyframes bounce{
+    50%{
+        transform:translateY(8px);
+    }
+}
+
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    margin-top:40px;
+    color:#324b4d;
+}
+
+
+/* FADE */
+
+.fade-in{
+    opacity:0;
+    transform:translateY(25px);
+    transition:.8s;
+}
+
+.fade-in.show{
+    opacity:1;
+    transform:none;
+}
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+body{
+    padding:15px;
+}
+
+.container{
+    padding:25px 15px;
+}
+
+.profile h1{
+    font-size:28px;
+}
+
+.cards{
+    grid-template-columns:1fr;
+}
+
+.box{
+    text-align:center;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+<section class="profile fade-in">
+
 <h1>Trần Đặng Phước Vinh</h1>
 
 <h3>
@@ -24,7 +244,7 @@ Student • Competitive Programmer • Web Developer • Problem Solver
 <p><b>Ngày sinh:</b> 18/11/2009</p>
 
 <p><b>Trường:</b> THPT U Minh</p>
-<p><b>Contact for Work</b></p>
+
 
 <button class="scroll-btn"
 onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
