@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -113,6 +113,10 @@ html{
     transform:translateY(-10px);
     box-shadow:0 20px 40px #0003;
 }
+.box.active{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px #0003;
+}
 
 .box h2{
     text-align:center;
@@ -176,6 +180,10 @@ a{
 }
 .achievement li:hover{
     transform:translateX(5px);
+}
+.achievement li.active{
+    transform:translateX(5px);
+    background:#dff3ff;
 }
 
 /* BUTTON */
@@ -660,6 +668,42 @@ document.addEventListener("DOMContentLoaded", () => {
         },600);
 
     },2000);
+
+});
+</script>
+<script>
+    const boxes = document.querySelectorAll(".box");
+const achievements = document.querySelectorAll(".achievement li");
+
+// Card
+boxes.forEach(box => {
+    box.addEventListener("click", () => {
+
+        boxes.forEach(b => b.classList.remove("active"));
+        box.classList.add("active");
+
+    });
+});
+
+// Achievement
+achievements.forEach(item => {
+    item.addEventListener("click", e => {
+
+        e.stopPropagation(); // không cho click lan lên card
+
+        achievements.forEach(li => li.classList.remove("active"));
+        item.classList.add("active");
+
+    });
+});
+
+// Click ra ngoài
+document.addEventListener("click", e => {
+
+    if (!e.target.closest(".box")) {
+        boxes.forEach(b => b.classList.remove("active"));
+        achievements.forEach(li => li.classList.remove("active"));
+    }
 
 });
 </script>
