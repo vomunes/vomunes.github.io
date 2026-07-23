@@ -18,10 +18,13 @@ Tin học
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="icon" type="image/jpeg" href="avt.jpg">
 <meta property="og:title" content="Trần Đặng Phước Vinh | Competitive Programmer">
 <meta property="og:description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vomunes.github.io">
+<meta property="og:image" content="https://vomunes.github.io/avt.jpg">
+<meta property="og:site_name" content="Trần Đặng Phước Vinh">
 <style>
 
 *{
@@ -73,13 +76,15 @@ html{
 /* PROFILE */
 
 .profile{
+    color:#71C9CE;
     text-align:center;
     margin-bottom:50px;
 }
 
 .profile h1{
-    font-size:40px;
-    color:#1f3b57;
+    display:inline-block;
+    white-space:nowrap;
+    border-right:3px solid #71C9CE;
 }
 
 .profile h3{
@@ -224,11 +229,20 @@ a{
     gap:25px;
     margin-top:15px;
 }
+.links a{
+    transition:.3s;
+}
+
+.links a:hover{
+    transform:translateY(-3px);
+}
 .links i{
     font-size:35px;
     transition:.3s;
 }
-
+.links a:hover i{
+    transform:scale(1.2);
+}
 .links i:hover{
     transform:scale(1.2);
 }
@@ -274,6 +288,56 @@ body{
 }
 
 }
+#loader{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(
+        120deg,
+        #E3FDFD,
+        #dcefff,
+        #b8e8ff
+    );
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    transition:opacity .6s ease, visibility .6s ease;
+}
+
+#loader img{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid white;
+    box-shadow:0 10px 25px #0002;
+    animation:avatarFloat 2s ease-in-out infinite;
+}
+
+#loader h2{
+    margin-top:20px;
+    color:#1f3b57;
+    font-weight:600;
+    letter-spacing:1px;
+}
+
+@keyframes avatarFloat{
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+#loader.hide{
+    opacity:0;
+    visibility:hidden;
+}
+
+#typing-title{
+    display:inline-block;
+    border-right:3px solid #71C9CE;
+    white-space:nowrap;
+}
 
 </style>
 
@@ -281,13 +345,16 @@ body{
 
 
 <body>
-
+<div id="loader">
+    <img src="avt.jpg" alt="Trần Đặng Phước Vinh">
+    <h2>Trần Đặng Phước Vinh</h2>
+</div>
 <main class="container">
 
 
 <section class="profile fade-in">
 
-<h1>Trần Đặng Phước Vinh</h1>
+<h1 id="typing-title"></h1>
 <h3>
 Student • Competitive Programmer • Web Developer
 </h3>
@@ -298,7 +365,6 @@ Student • Competitive Programmer • Web Developer
 
 
 <section class="cards">
-
 
 <section class="box fade-in">
 
@@ -512,7 +578,49 @@ threshold:.15
 items.forEach(item=>observer.observe(item));
 
 </script>
+<script>
+window.addEventListener("load", () => {
 
+    const loader = document.getElementById("loader");
+    const title = document.getElementById("typing-title");
 
+    const text = "Trần Đặng Phước Vinh";
+
+    setTimeout(() => {
+
+        loader.classList.add("hide");
+
+        setTimeout(() => {
+
+            loader.remove();
+
+            let i = 0;
+
+            function type() {
+
+                if (i < text.length) {
+
+                    title.textContent += text.charAt(i);
+                    i++;
+
+                    setTimeout(type, 120); // Tốc độ gõ (ms)
+
+                } else {
+
+                    // Gõ xong thì xóa con trỏ
+                    title.style.borderRight = "none";
+
+                }
+
+            }
+
+            type();
+
+        }, 600);
+
+    }, 1000);
+
+});
+</script>
 </body>
 </html>
