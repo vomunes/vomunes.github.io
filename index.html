@@ -1,32 +1,27 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trần Đặng Phước Vinh</title>
+<title>Trần Đặng Phước Vinh | Portfolio</title>
 <meta name="author" content="Trần Đặng Phước Vinh">
 
-<meta name="keywords" content="
-Trần Đặng Phước Vinh,
-Competitive Programmer,
-Web Developer,
-Tin học
-">
-<meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh">
+<meta name="keywords" content="Trần Đặng Phước Vinh, Competitive Programmer, Web Developer, Tin học">
+<meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh - Student, Competitive Programmer, Web Developer">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" type="image/jpeg" href="avatar.jpg">
+
 <meta property="og:title" content="Trần Đặng Phước Vinh | Competitive Programmer">
 <meta property="og:description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vomunes.github.io">
 <meta property="og:image" content="https://vomunes.github.io/avt.jpg">
 <meta property="og:site_name" content="Trần Đặng Phước Vinh">
-<style>
 
+<style>
 *{
     margin:0;
     padding:0;
@@ -34,32 +29,19 @@ Tin học
     font-family:Poppins,sans-serif;
 }
 
-body{
-background:
-linear-gradient(
-120deg,
-#E3FDFD,
-#dcefff,
-#b8e8ff
-);
-
-background-size:300% 300%;
-
-animation:bg 10s ease infinite;
-
+html{
+    scroll-behavior:smooth;
 }
 
+body{
+    background: linear-gradient(120deg, #E3FDFD, #dcefff, #b8e8ff);
+    background-size:300% 300%;
+    animation:bg 10s ease infinite;
+}
 
 @keyframes bg{
-
-50%{
-
-background-position:100% 50%;
-
+    50%{ background-position:100% 50%; }
 }
-
-}
-
 
 .container{
     max-width:1100px;
@@ -69,32 +51,29 @@ background-position:100% 50%;
     background:#cbf1f5;
     box-shadow:0 10px 30px #0002;
 }
-html{
-    scroll-behavior:smooth;
-}
 
 /* PROFILE */
-
 .profile{
     color:#71C9CE;
     text-align:center;
     margin-bottom:50px;
+    min-height: 110px; /* Giữ khung để không bị giật trang khi gõ chữ */
 }
 
 .profile h1{
     display:inline-block;
     white-space:nowrap;
     border-right:3px solid #71C9CE;
+    min-height: 2.2rem;
 }
 
 .profile h3{
     color:#5d7288;
     font-weight:400;
+    margin-top: 10px;
 }
 
-
-/* CARD */
-
+/* CARD GRID */
 .cards{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
@@ -106,16 +85,10 @@ html{
     padding:25px;
     border-radius:20px;
     box-shadow:0 15px 30px #0002;
-    transition:
-    transform .3s ease,
-        box-shadow .3s ease;
+    transition: transform .3s ease, box-shadow .3s ease;
 }
 
-.box:hover{
-    transform:translateY(-10px);
-    box-shadow:0 20px 40px #0003;
-}
-.box.active{
+.box:hover, .box.active{
     transform:translateY(-10px);
     box-shadow:0 20px 40px #0003;
 }
@@ -131,6 +104,7 @@ html{
     color:#73c2ef;
     animation:float 2s infinite;
 }
+
 .box h3{
     margin-top:20px;
     color:#2d5d8c;
@@ -139,11 +113,8 @@ html{
 }
 
 @keyframes float{
-    50%{
-        transform:translateY(-8px);
-    }
+    50%{ transform:translateY(-8px); }
 }
-
 
 .box p{
     color:#324b4d;
@@ -151,11 +122,7 @@ html{
     margin:10px 0;
 }
 
-
-b{
-    color:#2d5d8c;
-}
-
+b{ color:#2d5d8c; }
 
 a{
     color:#2d6ea3;
@@ -163,11 +130,7 @@ a{
     font-weight:700;
 }
 
-
-
-
-/* ACHIEVEMENT */
-
+/* ACHIEVEMENT & LISTS */
 .achievement{
     list-style:none;
 }
@@ -178,20 +141,19 @@ a{
     margin:10px 0;
     border-left:5px solid #a0cdf2;
     border-radius:10px;
-    transition:
-    transform .3s ease,
-        box-shadow .3s ease;
+    transition: transform .3s ease, box-shadow .3s ease;
 }
+
 .achievement li:hover{
     transform:translateX(5px);
 }
+
 .achievement li.active{
     transform:translateX(5px);
     background:#dff3ff;
 }
 
 /* BUTTON */
-
 .scroll-btn{
     display:block;
     margin:20px auto 0;
@@ -206,25 +168,18 @@ a{
     animation:bounce 1.5s infinite;
 }
 
-
 @keyframes bounce{
-    50%{
-        transform:translateY(8px);
-    }
+    50%{ transform:translateY(8px); }
 }
 
-
 /* FOOTER */
-
 .footer{
     text-align:center;
     margin-top:40px;
     color:#324b4d;
 }
 
-
-/* FADE */
-
+/* FADE ANIMATION */
 .fade-in{
     opacity:0;
     transform:translateY(25px);
@@ -235,80 +190,42 @@ a{
     opacity:1;
     transform:none;
 }
+
+/* LINKS */
 .links{
     display:flex;
     justify-content:center;
     gap:25px;
     margin-top:15px;
 }
-.links a{
-    transition:.3s;
-}
 
-.links a:hover{
-    transform:translateY(-3px);
-}
-.links i{
-    font-size:35px;
-    transition:.3s;
-}
-.links a:hover i{
-    transform:scale(1.2);
-}
-.links i:hover{
-    transform:scale(1.2);
-}
-.links a:first-child i{
-    color:#1877f2;
-}
+.links a{ transition:.3s; }
+.links a:hover{ transform:translateY(-3px); }
+.links i{ font-size:35px; transition:.3s; }
+.links a:hover i, .links i:hover{ transform:scale(1.2); }
 
-.links a:nth-child(2) i{
-    color:#000;
-}
+.links a:first-child i{ color:#1877f2; }
+.links a:nth-child(2) i{ color:#000; }
 .links a:nth-child(3) i{
     color:#fff;
-    filter:
-        drop-shadow(-2px -2px 0 #25F4EE)
-        drop-shadow(2px 2px 0 #FE2C55);
+    filter: drop-shadow(-2px -2px 0 #25F4EE) drop-shadow(2px 2px 0 #FE2C55);
 }
-.links a:last-child i{
-    color:#C89B3C;
-}
+.links a:last-child i{ color:#C89B3C; }
 
-/* MOBILE */
-
+/* MOBILE RESPONSIVE */
 @media(max-width:768px){
-
-body{
-    padding:15px;
+    body{ padding:15px; }
+    .container{ padding:25px 15px; }
+    .profile h1{ font-size:28px; }
+    .cards{ grid-template-columns:1fr; }
+    .box{ text-align:center; }
 }
 
-.container{
-    padding:25px 15px;
-}
-
-.profile h1{
-    font-size:28px;
-}
-
-.cards{
-    grid-template-columns:1fr;
-}
-
-.box{
-    text-align:center;
-}
-
-}
+/* LOADER */
 #loader{
     position:fixed;
     inset:0;
-    background:linear-gradient(
-        120deg,
-        #E3FDFD,
-        #dcefff,
-        #b8e8ff
-    );
+    background:linear-gradient(120deg, #E3FDFD, #dcefff, #b8e8ff);
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -335,9 +252,7 @@ body{
 }
 
 @keyframes avatarFloat{
-    50%{
-        transform:translateY(-10px);
-    }
+    50%{ transform:translateY(-10px); }
 }
 
 #loader.hide{
@@ -345,11 +260,6 @@ body{
     visibility:hidden;
 }
 
-#typing-title{
-    display:inline-block;
-    border-right:3px solid #71C9CE;
-    white-space:nowrap;
-}
 .spinner{
     width:60px;
     height:60px;
@@ -361,13 +271,10 @@ body{
 }
 
 @keyframes spin{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(360deg);
-    }
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
 }
+
 .progress{
     width:220px;
     height:8px;
@@ -385,331 +292,217 @@ body{
 }
 
 @keyframes loading{
-    from{
-        width:0%;
-    }
-    to{
-        width:100%;
-    }
+    from{ width:0%; }
+    to{ width:100%; }
 }
 </style>
-
 </head>
 
-
 <body>
+
 <div id="loader">
-    <img src="avatar.jpg" alt="avatar">
+    <img src="avatar.jpg" alt="Ảnh đại diện Trần Đặng Phước Vinh">
     <div class="spinner"></div>
     <h2>Trần Đặng Phước Vinh</h2>
     <div class="progress">
-    <div class="progress-bar"></div>
-</div>
+        <div class="progress-bar"></div>
+    </div>
 </div>
 
 <main class="container">
 
-
 <section class="profile fade-in">
-
-<h1 id="typing-title"></h1>
-<h3>
-Student • Competitive Programmer • Web Developer
-</h3>
-
-
+    <h1 id="typing-title"></h1>
+    <h3>Student • Competitive Programmer • Web Developer</h3>
 </section>
 
+<div class="cards">
 
+    <article class="box fade-in">
+        <h2><i class="fa-solid fa-user-graduate"></i></h2>
+        <h2>Thông Tin</h2>
+        <p><b>Họ tên:</b> Trần Đặng Phước Vinh</p>
+        <p><b>Ngày sinh:</b> 18/11/2009</p>
+        <p><b>Trường:</b> THPT U Minh</p>
+        <p><b>Liên Hệ Công Việc</b></p>
 
-<section class="cards">
+        <button class="scroll-btn" 
+                aria-label="Cuộn xuống phần liên hệ"
+                onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
+            <i class="fa-solid fa-chevron-down"></i>
+        </button>
+    </article>
 
-<section class="box fade-in">
+    <article class="box fade-in">
+        <h2><i class="fa-solid fa-code"></i></h2>
+        <h2>Kỹ Năng</h2>
+        <ul class="achievement">
+            <li>C++</li>
+            <li>C</li>
+            <li>Pascal</li>
+            <li>STL</li>
+            <li>Data Structures</li>
+            <li>Dynamic Programming</li>
+            <li>Graph Algorithms</li>
+            <li>HTML / CSS / JavaScript</li>
+            <li>Git & GitHub</li>
+            <li>Python</li>
+        </ul>
+    </article>
 
-<h2>
-<i class="fa-solid fa-user-graduate"></i>
-</h2>
+    <article class="box fade-in">
+        <h2><i class="fa-solid fa-laptop-code"></i></h2>
+        <h2>Competitive Programming</h2>
+        <ul class="achievement">
+            <li><a href="https://oj.eiu.edu.vn/user/Vinh" target="_blank" rel="noopener noreferrer">EIUOJ</a></li>
+            <li><a href="https://lqdoj.edu.vn/user/dangcapvutru" target="_blank" rel="noopener noreferrer">LQDOJ</a></li>
+            <li><a href="https://oj.vnoi.info/user/dangcapvutru" target="_blank" rel="noopener noreferrer">VNOI</a></li>
+        </ul>
+    </article>
 
-<h2>Thông Tin</h2>
+    <article class="box fade-in">
+        <h2><i class="fa-solid fa-award"></i></h2>
+        <h2>Thành Tựu</h2>
 
-<p><b>Họ tên:</b> Trần Đặng Phước Vinh</p>
+        <h3>Lớp 6</h3>
+        <ul class="achievement">
+            <li>🥉 Giải ba HSG Toán vòng trường.</li>
+        </ul>
 
-<p><b>Ngày sinh:</b> 18/11/2009</p>
+        <h3>Lớp 8</h3>
+        <ul class="achievement">
+            <li>🥉 Giải ba Tin học trẻ vòng huyện.</li>
+            <li>🥉 Giải ba Tin học trẻ vòng tỉnh.</li>
+        </ul>
 
-<p><b>Trường:</b> THPT U Minh</p>
-<p><b>Liên Hệ Công Việc</b></p>
+        <h3>Lớp 9</h3>
+        <ul class="achievement">
+            <li>🥉 Giải ba Casio vòng huyện.</li>
+            <li>🏅 Giải khuyến khích Casio vòng tỉnh.</li>
+            <li>🥉 Giải ba HSG Tin học huyện.</li>
+            <li>🥈 Giải nhì HSG Tin học tỉnh.</li>
+            <li>🥉 Giải ba Tin học trẻ huyện.</li>
+            <li>🥉 Giải ba Tin học trẻ tỉnh.</li>
+        </ul>
 
-<button class="scroll-btn"
-onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
+        <h3>Lớp 10</h3>
+        <ul class="achievement">
+            <li>🥉 Giải ba HSG Tin học tỉnh.</li>
+            <li>🏅 Khuyến khích Tin học trẻ tỉnh.</li>
+            <li>🥉 HCĐ Olympic 30/4 Tin học.</li>
+        </ul>
 
-<i class="fa-solid fa-chevron-down"></i>
+        <h3>Lớp 11</h3>
+        <ul class="achievement">
+            <li>🥉 Giải ba HSG Tin học tỉnh.</li>
+        </ul>
+    </article>
 
-</button>
+    <article class="box fade-in" id="contact">
+        <h2><i class="fa-solid fa-address-card"></i></h2>
+        <h2>Liên Hệ</h2>
 
+        <p>
+            <i class="fa-solid fa-envelope"></i> <b>Email</b><br>
+            <a href="mailto:trandangphuocvinh@gmail.com">trandangphuocvinh@gmail.com</a>
+        </p>
 
-</section>
-<section class="box fade-in">
+        <p>
+            <i class="fa-solid fa-phone"></i> <b>Điện thoại</b><br>
+            <a href="tel:0919951334">0919951334</a>
+        </p>
 
-<h2>
-<i class="fa-solid fa-code"></i>
-</h2>
+        <div class="links">
+            <a href="https://facebook.com/anhlavinhdepzai" aria-label="Facebook cá nhân" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+            <a href="https://github.com/vomunes" aria-label="Tài khoản GitHub" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="https://www.tiktok.com/@trandangphuocvinh" aria-label="Tài khoản TikTok" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://locket.cam/ph.vinh" aria-label="Tài khoản Locket" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-heart"></i>
+            </a>
+        </div>
+    </article>
 
-<h2>Kỹ Năng</h2>
-
-<ul class="achievement">
-    <li>C++</li>
-    <li>C</li>
-    <li>Pascal</li>
-    <li>STL</li>
-    <li>Data Structures</li>
-    <li>Dynamic Programming</li>
-    <li>Graph Algorithms</li>
-    <li>HTML / CSS / JavaScript</li>
-    <li>Git & GitHub</li>
-    <li>Python</li>
-    
-</ul>
-
-</section>
-<section class="box fade-in">
-    <h2><i class="fa-solid fa-laptop-code"></i></h2>
-    <h2>Competitive Programming</h2>
-    <ul class="achievement">
-        <li><a href = "https://oj.eiu.edu.vn/user/Vinh" target="_blank" rel="noopener noreferrer">EIUOJ</a></li>
-        <li><a href = "https://lqdoj.edu.vn/user/dangcapvutru" target="_blank" rel="noopener noreferrer">LQDOJ</a></li>
-        <li><a href = "https://oj.vnoi.info/user/dangcapvutru" target="_blank" rel="noopener noreferrer">VNOI</a></li>
-    </ul>
-</section>
-
-
-<section class="box fade-in">
-
-
-<h2>
-<i class="fa-solid fa-award"></i>
-</h2>
-
-<h2>Thành Tựu</h2>
-
-
-
-<h3>Lớp 6</h3>
-<ul class="achievement">
-    <li>🥉 Giải ba HSG Toán vòng trường.</li>
-</ul>
-
-<h3>Lớp 8</h3>
-<ul class="achievement">
-    <li>🥉 Giải ba Tin học trẻ vòng huyện.</li>
-    <li>🥉 Giải ba Tin học trẻ vòng tỉnh.</li>
-</ul>
-
-<h3>Lớp 9</h3>
-<ul class="achievement">
-    <li>🥉 Giải ba Casio vòng huyện.</li>
-    <li>🏅 Giải khuyến khích Casio vòng tỉnh.</li>
-    <li>🥉 Giải ba HSG Tin học huyện.</li>
-    <li>🥈 Giải nhì HSG Tin học tỉnh.</li>
-    <li>🥉 Giải ba Tin học trẻ huyện.</li>
-    <li>🥉 Giải ba Tin học trẻ tỉnh.</li>
-</ul>
-
-<h3>Lớp 10</h3>
-<ul class="achievement">
-    <li>🥉 Giải ba HSG Tin học tỉnh.</li>
-    <li>🏅 Khuyến khích Tin học trẻ tỉnh.</li>
-    <li>🥉 HCĐ Olympic 30/4 Tin học.</li>
-</ul>
-
-<h3>Lớp 11</h3>
-<ul class="achievement">
-    <li>🥉 Giải ba HSG Tin học tỉnh.</li>
-</ul>
-
-
-</section>
-
-
-
-
-
-<section class="box fade-in" id="contact">
-
-
-<h2>
-<i class="fa-solid fa-address-card"></i>
-</h2>
-
-<h2>Liên Hệ</h2>
-
-
-<p>
-<i class="fa-solid fa-envelope"></i>
-<b>Email</b><br>
-
-<a href="mailto:trandangphuocvinh@gmail.com">
-trandangphuocvinh@gmail.com
-</a>
-
-</p>
-
-
-<p>
-
-<i class="fa-solid fa-phone"></i>
-
-<b>Điện thoại</b><br>
-
-<a href="tel:0919951334">
-0919951334
-</a>
-
-</p>
-<div class = "links">
-<a href="https://facebook.com/anhlavinhdepzai" aria-label="Facebook" target="_blank" rel="noopener noreferrer"    >
-<i class="fa-brands fa-facebook"></i>
-</a>
-
-    
-<a href="https://github.com/vomunes" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
-<i class="fa-brands fa-github"></i>
-</a>
-<a href="https://www.tiktok.com/@trandangphuocvinh"
-   aria-label="TikTok"
-   target="_blank"
-   rel="noopener noreferrer">
-    <i class="fa-brands fa-tiktok"></i>
-</a>
-
-<a href="https://locket.cam/ph.vinh"
-   aria-label="Locket"
-   target="_blank"
-   rel="noopener noreferrer">
-    <i class="fa-solid fa-heart"></i>
-</a>
 </div>
 
-
-
-
-</section>
-
-
-</section>
-
-
-
 <footer class="footer fade-in">
-
-<p>
-Designed by <b>Trần Đặng Phước Vinh</b>
-</p>
-
+    <p>Designed by <b>Trần Đặng Phước Vinh</b></p>
 </footer>
-
 
 </main>
 
-
-
-
 <script>
+// Intersection Observer cho Fade-in
+const items = document.querySelectorAll(".fade-in");
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(e.isIntersecting){
+            e.target.classList.add("show");
+            observer.unobserve(e.target);
+        }
+    });
+}, { threshold: .15 });
 
-const items=document.querySelectorAll(".fade-in");
+items.forEach(item => observer.observe(item));
 
-const observer=new IntersectionObserver(entries=>{
-
-entries.forEach(e=>{
-
-if(e.isIntersecting){
-    e.target.classList.add("show");
-    observer.unobserve(e.target);
-}
-
-});
-
-},{
-threshold:.15
-});
-
-
-items.forEach(item=>observer.observe(item));
-
-</script>
-<script>
+// Loader & Typing Title Animation
 document.addEventListener("DOMContentLoaded", () => {
-
     const loader = document.getElementById("loader");
     const title = document.getElementById("typing-title");
-
     const text = "Trần Đặng Phước Vinh";
 
-    // Giữ loader tối thiểu 2 giây
     setTimeout(() => {
-
         loader.classList.add("hide");
 
         setTimeout(() => {
-
             loader.remove();
-
             let i = 0;
 
             function type() {
-
                 if (i < text.length) {
                     title.textContent += text.charAt(i);
                     i++;
-                    setTimeout(type,120);
+                    setTimeout(type, 120);
                 } else {
                     title.style.borderRight = "none";
                 }
-
             }
-
             type();
-
-        },600);
-
-    },2000);
-
+        }, 600);
+    }, 1500);
 });
-</script>
-<script>
-    const boxes = document.querySelectorAll(".box");
+
+// Click Active States
+const boxes = document.querySelectorAll(".box");
 const achievements = document.querySelectorAll(".achievement li");
 
-// Card
 boxes.forEach(box => {
     box.addEventListener("click", () => {
-
         boxes.forEach(b => b.classList.remove("active"));
         box.classList.add("active");
-
     });
 });
 
-// Achievement
 achievements.forEach(item => {
     item.addEventListener("click", e => {
-
-        e.stopPropagation(); // không cho click lan lên card
-
+        e.stopPropagation();
         achievements.forEach(li => li.classList.remove("active"));
         item.classList.add("active");
-
     });
 });
 
-// Click ra ngoài
 document.addEventListener("click", e => {
-
     if (!e.target.closest(".box")) {
         boxes.forEach(b => b.classList.remove("active"));
         achievements.forEach(li => li.classList.remove("active"));
     }
-
 });
 </script>
+
 </body>
 </html>
