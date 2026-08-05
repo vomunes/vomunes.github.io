@@ -6,21 +6,20 @@
 
 <title>Trần Đặng Phước Vinh | Portfolio</title>
 <meta name="author" content="Trần Đặng Phước Vinh">
-
+<meta name="theme-color" content="#71C9CE">
+<meta name="robots" content="index,follow">
 <meta name="keywords" content="Trần Đặng Phước Vinh, Competitive Programmer, Web Developer, Tin học">
 <meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh - Student, Competitive Programmer, Web Developer">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" type="image/jpeg" href="avatar.jpg">
-
 <meta property="og:title" content="Trần Đặng Phước Vinh | Competitive Programmer">
 <meta property="og:description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vomunes.github.io">
-<meta property="og:image" content="https://vomunes.github.io/avt.jpg">
+<meta property="og:image" content="https://vomunes.github.io/avatar.jpg">
 <meta property="og:site_name" content="Trần Đặng Phước Vinh">
-
+<meta property="og:locale" content="vi_VN">
 <style>
 *{
     margin:0;
@@ -72,7 +71,26 @@ body{
     font-weight:400;
     margin-top: 10px;
 }
+#toast{
+    position:fixed;
+    left:50%;
+    bottom:30px;
+    transform:translateX(-50%);
+    background:#333;
+    color:white;
+    padding:12px 22px;
+    border-radius:10px;
+    font-size:15px;
+    opacity:0;
+    transition:.3s;
+    pointer-events:none;
+    z-index:9999;
+}
 
+#toast.show{
+    opacity:1;
+    bottom:50px;
+}
 /* CARD GRID */
 .cards{
     display:grid;
@@ -395,6 +413,7 @@ a{
         <h3>Lớp 11</h3>
         <ul class="achievement">
             <li>🥉 Giải ba HSG Tin học tỉnh.</li>
+            <li>🏅 Thành viên đội tuyển HSG Quốc gia môn Tin học tỉnh Cà Mau.</li>
         </ul>
     </article>
 
@@ -404,12 +423,16 @@ a{
 
         <p>
             <i class="fa-solid fa-envelope"></i> <b>Email</b><br>
-            <a href="mailto:trandangphuocvinh@gmail.com">trandangphuocvinh@gmail.com</a>
+            <a href="#" onclick="copyText('trandangphuocvinh@gmail.com'); return false;">
+    trandangphuocvinh@gmail.com
+</a>
         </p>
 
         <p>
             <i class="fa-solid fa-phone"></i> <b>Điện thoại</b><br>
-            <a href="tel:0919951334">0919951334</a>
+            <a href="#" onclick="copyText('0919951334'); return false;">
+    0919951334
+</a>
         </p>
 
         <div class="links">
@@ -503,6 +526,21 @@ document.addEventListener("click", e => {
     }
 });
 </script>
+<script>
+    function copyText(text){
+    navigator.clipboard.writeText(text);
 
+    const toast=document.getElementById("toast");
+
+    toast.innerHTML="Đã sao chép: " + text;
+
+    toast.classList.add("show");
+
+    setTimeout(()=>{
+        toast.classList.remove("show");
+    },2000);
+}
+</script>
+<div id="toast"></div>
 </body>
 </html>
