@@ -11,7 +11,7 @@
 <meta name="robots" content="index,follow">
 <meta name="keywords" content="Trần Đặng Phước Vinh, Competitive Programmer, Web Developer, Tin học">
 <meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh - Student, Competitive Programmer, Web Developer">
-
+<meta name="theme-color" content="#02040b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,8 +46,15 @@ html {
     overscroll-behavior: none;
 }
 
+html {
+    scroll-behavior: smooth;
+    overscroll-behavior: none;
+    background-color: #01020a; /* Khóa màu nền gốc của HTML */
+}
+
 body {
     min-height: 100vh;
+    min-height: 100dvh; /* Sử dụng dynamic viewport height để chuẩn xác trên mobile */
     color: var(--white);
     font-family: 'Be Vietnam Pro', sans-serif;
     overflow: hidden;
@@ -59,7 +66,10 @@ body {
         radial-gradient(ellipse 55% 65% at 5% 80%, rgba(20, 80, 165, .20), transparent 72%),
         radial-gradient(ellipse 45% 40% at 50% 75%, rgba(115, 40, 165, .14), transparent 75%),
         linear-gradient(180deg, #01020a 0%, #05091d 40%, #09051b 72%, #01020a 100%);
+    background-attachment: fixed; /* Giữ cố định background trên thiết bị di động */
 }
+
+
 
 .profile {
     padding: 15px 20px 5px;
@@ -90,6 +100,7 @@ body {
     position: relative;
     width: 100%;
     height: calc(100vh - 120px);
+    height: calc(100dvh - 120px); /* Tương thích với 100dvh */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -801,7 +812,6 @@ function createShootingStar() {
     star.style.setProperty("--ty", `${Math.sin(angleRad) * distance}px`);
     star.style.setProperty("--max-len", `${140 + Math.random() * 100}px`);
     star.style.setProperty("--duration", `${1.2 + Math.random() * 0.8}s`);
-
     container.appendChild(star);
     setTimeout(() => star.remove(), 2000);
 }
