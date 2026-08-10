@@ -106,7 +106,7 @@ body {
     align-items: center;
 }
 
-/* Sun Center - Tỏa sáng nhẹ nhàng */
+/* Sun Center - Ánh kim dịu mắt */
 .sun {
     position: absolute;
     width: 76px;
@@ -127,17 +127,18 @@ body {
     z-index: 1;
 }
 
-/* Orbit Ring Rotator */
+/* Orbit Ring Rotator - Tối ưu Easing & GPU */
 .orbit-rotator {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    /* Đổi từ 0.75s xuống 0.2s để chuyển động siêu nhanh */
+    transition: transform 0.46s cubic-bezier(0.1, 0.9, 0.2, 1);
     z-index: 3;
+    will-change: transform;
 }
-
-/* Planet Item */
+/* Tăng tốc độ xoay ngược của từng hành tinh */
 .planet-node {
     position: absolute;
     top: 50%;
@@ -151,8 +152,11 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    /* Đổi từ 0.75s xuống 0.2s */
+    transition: transform 0.54s cubic-bezier(0.1, 0.9, 0.2, 1);
+    will-change: transform;
 }
+
 
 .planet-body {
     width: 100%;
@@ -217,7 +221,8 @@ body {
     text-align: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
     z-index: 20;
 }
 
@@ -312,7 +317,7 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
     box-shadow: 0 0 10px rgba(100, 230, 255, 0.3);
 }
 
-/* Ẩn bộ đếm */
+/* Ẩn bộ đếm an toàn */
 .controls {
     display: none !important;
 }
@@ -625,17 +630,18 @@ function typeTitle(){
 }
 window.addEventListener("load", () => setTimeout(typeTitle, 250));
 
-/* --- DỰ NÁNS SOLAR SYSTEM ROTATION LOGIC --- */
+/* --- SOLAR SYSTEM ROTATION LOGIC (OPTIMIZED & SMOOTH) --- */
 const planets = [...document.querySelectorAll(".planet-node")];
 const orbitRotator = document.getElementById("orbitRotator");
 const counter = document.getElementById("counter");
 const totalPlanets = planets.length;
 
 let current = 0;
-let totalRotationSteps = 0; // Cộng dồn bước xoay để không giật ngược
+let totalRotationSteps = 0; // Biến cộng dồn số bước xoay
 let locked = false;
 let touchStartX = 0;
 let touchStartY = 0;
+let blurTimeout;
 
 function positionPlanets() {
     const radius = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius')) || 260;
@@ -661,7 +667,7 @@ function positionPlanets() {
 function render() {
     const stepAngle = 360 / totalPlanets;
     const targetAngle = -totalRotationSteps * stepAngle;
-    
+
     orbitRotator.style.transform = `rotate(${targetAngle}deg)`;
 
     planets.forEach((planet, index) => {
@@ -676,7 +682,6 @@ function render() {
         planet.style.transform = `translate(${x}px, ${y}px) rotate(${-targetAngle}deg)`;
     });
 
-    // Kiểm tra an toàn trước khi gán để không bị ngắt JS
     if (counter) {
         counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(totalPlanets).padStart(2, "0")}`;
     }
@@ -693,23 +698,36 @@ function move(step) {
 
     render();
 
-    setTimeout(() => { locked = false; }, 130);
-}
+    // Rút ngắn thời gian khóa từ 350ms xuống 100ms để vuốt/cuộn nhạy ngay lập tức
+    setTimeout(() => { locked = false; }, 100);
+}   
 
-/* --- CUỘN CHUỘT TRÊN MÁY TÍNH --- */
+/* --- TỐI ƯU CUỘN CHUỘT (PC) --- */
+let wheelCooldown = false;
 window.addEventListener("wheel", event => {
-    if (Math.abs(event.deltaY) < 15) return;
+    if (wheelCooldown || Math.abs(event.deltaY) < 5) return;
+    
+    wheelCooldown = true;
     if (event.deltaY > 0) move(1);
     else move(-1);
-}, { passive: true });
 
-/* --- VUỐT TRÊN ĐIỆN THOẠI --- */
-window.addEventListener("touchstart", e => {
+    // Giảm xuống 80ms để nhăn chuột tới đâu hành tinh xoay tới đó
+    setTimeout(() => { wheelCooldown = false; }, 80);
+}, { passive: true });
+/* --- TỐI ƯU CẢM ỨNG (MOBILE) --- */
+const contentSection = document.getElementById("content-section");
+
+contentSection.addEventListener("touchstart", e => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
 }, { passive: true });
 
-window.addEventListener("touchend", e => {
+contentSection.addEventListener("touchmove", e => {
+    // Ngăn giật/trôi trang web điện thoại khi lướt
+    if (e.cancelable) e.preventDefault(); 
+}, { passive: false });
+
+contentSection.addEventListener("touchend", e => {
     if (!touchStartX || !touchStartY) return;
 
     let touchEndX = e.changedTouches[0].clientX;
@@ -718,13 +736,14 @@ window.addEventListener("touchend", e => {
     let diffX = touchStartX - touchEndX;
     let diffY = touchStartY - touchEndY;
 
+    // Giảm ngưỡng vuốt xuống 15px để chỉ cần nhích nhẹ ngón tay là chuyển ngay
     if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > 35) {
+        if (Math.abs(diffX) > 15) {
             if (diffX > 0) move(1);
             else move(-1);
         }
     } else {
-        if (Math.abs(diffY) > 35) {
+        if (Math.abs(diffY) > 15) {
             if (diffY > 0) move(1);
             else move(-1);
         }
@@ -733,7 +752,6 @@ window.addEventListener("touchend", e => {
     touchStartX = 0;
     touchStartY = 0;
 }, { passive: true });
-
 /* --- BÀN PHÍM --- */
 window.addEventListener("keydown", event => {
     if (["ArrowRight", "ArrowDown"].includes(event.key)) move(1);
