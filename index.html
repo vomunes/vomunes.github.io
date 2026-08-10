@@ -117,10 +117,9 @@ body {
 
 .sun {
     position: absolute;
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
     border-radius: 50%;
-    /* THAY ĐƯỜNG DẪN ẢNH CỦA BẠN VÀO ĐÂY (ví dụ: 'sun.png' hoặc link ảnh) */
     background-image: url('avatar.jpg');
     background-size: cover;
     background-position: center;
@@ -131,8 +130,6 @@ body {
         0 0 100px rgba(255, 107, 107, 0.3);
     z-index: 2;
 }
-
-
 
 .orbit-line {
     position: absolute;
@@ -179,7 +176,7 @@ body {
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: 22px; /* Tăng từ 17px lên */
+    font-size: 22px;
     border: 1.5px solid rgba(255, 255, 255, 0.35);
     position: relative;
     z-index: 1;
@@ -211,12 +208,12 @@ body {
 }
 
 .circle-card {
-   position: absolute;
-    width: 380px; /* Tăng từ 330px lên rộng hơn */
+    position: absolute;
+    width: 380px;
     top: -20px;
     left: 80px;
     border-radius: 16px;
-    padding: 22px 20px; /* Tăng nhẹ padding cho thoáng */
+    padding: 22px 20px;
     background: rgba(8, 14, 32, 0.96);
     border: 1px solid rgba(137, 165, 255, 0.25);
     box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(75,110,255,.3);
@@ -245,7 +242,7 @@ body {
 }
 
 .box-icon {
-    font-size: 32px; /* Tăng từ 24px lên */
+    font-size: 32px;
     color: var(--cyan);
     margin-bottom: 6px;
     filter: drop-shadow(0 0 8px rgba(95,170,255,.6));
@@ -433,13 +430,35 @@ body::before {
     100% { clip-path: inset(0 0 0 100%); transform: translate(var(--tx), var(--ty)) rotate(var(--angle)); opacity: 0; }
 }
 
+/* --- ĐIỀU CHỈNH GIAO DIỆN TRÊN ĐIỆN THOẠI (MAX-WIDTH: 600PX) --- */
 @media (max-width: 600px) {
     :root { --orbit-radius: 170px; }
-    .sun { width: 56px; height: 56px; }
+    
+    /* Tăng kích thước sun lên để không bị quá nhỏ */
+    .sun { 
+        width: 130px; 
+        height: 130px; 
+    }
+    
     .planet-node { width: 36px; height: 36px; margin-top: -18px; margin-left: -18px; }
     .planet-body { font-size: 14px; }
-    .circle-card { width: 380px; padding: 15px; top: -20px; left: 80%; transform: translateX(-50%) scale(0.6); transform-origin: center top; }
+    
+    /* Thu nhỏ kích thước base của circle-card và tinh chỉnh lại scale để nội dung vừa vặn */
+    .circle-card { 
+        width: 280px; 
+        padding: 14px; 
+        top: -18px; 
+        left: 50%; 
+        transform: translateX(-50%) scale(0.85); 
+        transform-origin: center top; 
+    }
     .circle-card.is-rendered { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    
+    /* Thu nhỏ kích thước chữ bên trong card cho đỡ cảm giác quá lớn */
+    .box-content h2 { font-size: 14px; }
+    .box-content p { font-size: 11.5px; }
+    .achievement li { font-size: 11px; padding: 6px 8px 6px 14px; }
+    .box-icon { font-size: 24px; margin-bottom: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -650,7 +669,7 @@ function initPlanets() {
 function hideCard(planet, fast) {
     const card = planet.querySelector(".circle-card");
     if (!card) return;
-    gsap.killTweensOf(card); // Hủy mọi tween cũ của thẻ đang chạy dở
+    gsap.killTweensOf(card);
     card.classList.remove('is-rendered');
     gsap.to(card, { scale: 0.5, opacity: 0, duration: fast ? 0.15 : 0.2, ease: "power2.in" });
 }
@@ -658,7 +677,7 @@ function hideCard(planet, fast) {
 function showCard(planet) {
     const card = planet.querySelector(".circle-card");
     if (!card) return;
-    gsap.killTweensOf(card); // Hủy mọi tween cũ để tránh xung đột nháy hình
+    gsap.killTweensOf(card);
     gsap.fromTo(card,
         { scale: 0.4, opacity: 0 },
         {
@@ -710,7 +729,7 @@ function transitionTo(newIndex, velocity) {
 
     if (prevPlanet) {
         prevPlanet.classList.remove('is-active');
-        gsap.killTweensOf(prevPlanet); // Thêm dòng này
+        gsap.killTweensOf(prevPlanet);
         hideCard(prevPlanet, true);
         tl.to(prevPlanet, {
             x: 0, y: 0, scale: 0, opacity: 0,
@@ -722,7 +741,7 @@ function transitionTo(newIndex, velocity) {
 
     if (nextPlanet) {
         nextPlanet.style.pointerEvents = "auto";
-        gsap.killTweensOf(nextPlanet); // Thêm dòng này
+        gsap.killTweensOf(nextPlanet);
         tl.fromTo(nextPlanet,
             { x: 0, y: 0, scale: 0, opacity: 0 },
             {
