@@ -430,31 +430,23 @@ body::before {
     100% { clip-path: inset(0 0 0 100%); transform: translate(var(--tx), var(--ty)) rotate(var(--angle)); opacity: 0; }
 }
 
-/* --- ĐIỀU CHỈNH GIAO DIỆN TRÊN ĐIỆN THOẠI (MAX-WIDTH: 600PX) --- */
 @media (max-width: 600px) {
     :root { --orbit-radius: 170px; }
-    
-    /* Tăng kích thước sun lên để không bị quá nhỏ */
-    .sun { 
-        width: 130px; 
-        height: 130px; 
-    }
-    
+    .sun { width: 150px; height: 150px; }
     .planet-node { width: 36px; height: 36px; margin-top: -18px; margin-left: -18px; }
     .planet-body { font-size: 14px; }
     
-    /* Thu nhỏ kích thước base của circle-card và tinh chỉnh lại scale để nội dung vừa vặn */
+    /* Đưa khung nội dung nằm phía dưới sun bằng cách đẩy card lên từ phía dưới hành tinh */
     .circle-card { 
         width: 280px; 
         padding: 14px; 
-        top: -18px; 
+        top: -210px; 
         left: 50%; 
-        transform: translateX(-50%) scale(0.85); 
-        transform-origin: center top; 
+        transform: translateX(-50%) scale(0.55); 
+        transform-origin: center bottom; 
     }
     .circle-card.is-rendered { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
     
-    /* Thu nhỏ kích thước chữ bên trong card cho đỡ cảm giác quá lớn */
     .box-content h2 { font-size: 14px; }
     .box-content p { font-size: 11.5px; }
     .achievement li { font-size: 11px; padding: 6px 8px 6px 14px; }
@@ -463,7 +455,6 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
     .planet-pointer { animation: none; }
-    .sun::after { animation: none; }
 }
 </style>
 </head>
@@ -671,7 +662,7 @@ function hideCard(planet, fast) {
     if (!card) return;
     gsap.killTweensOf(card);
     card.classList.remove('is-rendered');
-    gsap.to(card, { scale: 0.5, opacity: 0, duration: fast ? 0.15 : 0.2, ease: "power2.in" });
+    gsap.to(card, { scale: 0.5, opacity: 0, duration: fast ? 0.1 : 0.15, ease: "power2.in" });
 }
 
 function showCard(planet) {
@@ -683,9 +674,9 @@ function showCard(planet) {
         {
             scale: 1,
             opacity: 1,
-            duration: 0.35,
+            duration: 0.25,
             ease: "back.out(1.6)",
-            delay: 0.05,
+            delay: 0.02,
             onComplete: () => {
                 card.classList.add('is-rendered');
                 const achList = card.querySelector('.achievement');
@@ -697,24 +688,30 @@ function showCard(planet) {
 
 function burstSun(velocity) {
     const dir = velocity >= 0 ? 1 : -1;
+    const absVel = Math.abs(velocity) || 1;
+    const dur = Math.max(0.12, 0.4 / Math.sqrt(absVel));
+    
     gsap.killTweensOf(sunEl);
     gsap.to(sunEl, {
-        rotation: "+=" + (40 * dir),
-        scale: 1.1,
-        duration: 0.6,
+        rotation: "+=" + (30 * dir),
+        scale: 1.06,
+        duration: dur * 0.7,
         ease: "power2.inOut"
     });
-    gsap.to(sunEl, { scale: 1, duration: 0.3, delay: 0.6, ease: "power2.out" });
+    gsap.to(sunEl, { scale: 1, duration: dur * 0.3, delay: dur * 0.7, ease: "power2.out" });
 }
 
 function transitionTo(newIndex, velocity) {
-    if (isAnimating || newIndex === current) return;
+    if (isAnimating && Math.abs(velocity) < 2) return;
     isAnimating = true;
 
-    if (scrollHint) gsap.to(scrollHint, { opacity: 0, duration: 0.3 });
+    if (scrollHint) gsap.to(scrollHint, { opacity: 0, duration: 0.2 });
 
     const radius = getRadius();
-    const angle = -90 * (Math.PI / 180);
+    // ĐIỀU CHỈNH: Trên mobile đặt góc 90 độ (dưới sun), desktop đặt góc -90 độ (trên sun)
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    const angle = isMobile ? (90 * (Math.PI / 180)) : (-90 * (Math.PI / 180));
+    
     const tx = Math.cos(angle) * radius;
     const ty = Math.sin(angle) * radius;
 
@@ -722,6 +719,9 @@ function transitionTo(newIndex, velocity) {
 
     const prevPlanet = current >= 0 ? planets[current] : null;
     const nextPlanet = newIndex >= 0 ? planets[newIndex] : null;
+
+    const absVel = Math.abs(velocity) || 1;
+    const animDuration = Math.max(0.12, Math.min(0.45, 0.35 / Math.sqrt(absVel)));
 
     const tl = gsap.timeline({
         onComplete: () => { isAnimating = false; }
@@ -733,7 +733,7 @@ function transitionTo(newIndex, velocity) {
         hideCard(prevPlanet, true);
         tl.to(prevPlanet, {
             x: 0, y: 0, scale: 0, opacity: 0,
-            duration: 0.6,
+            duration: animDuration,
             ease: "power2.inOut",
             onComplete: () => { prevPlanet.style.pointerEvents = "none"; }
         }, 0); 
@@ -746,7 +746,7 @@ function transitionTo(newIndex, velocity) {
             { x: 0, y: 0, scale: 0, opacity: 0 },
             {
                 x: tx, y: ty, scale: 1, opacity: 1,
-                duration: 0.6,
+                duration: animDuration,
                 ease: "power2.out",
                 onStart: () => { nextPlanet.classList.add('is-active'); },
                 onComplete: () => { showCard(nextPlanet); }
@@ -776,11 +776,11 @@ window.addEventListener("wheel", event => {
     if (wheelCooldown) return;
 
     wheelCooldown = true;
-    setTimeout(() => { wheelCooldown = false; }, 300);
+    setTimeout(() => { wheelCooldown = false; }, 120);
 
     const intensity = Math.abs(event.deltaY);
     const direction = event.deltaY > 0 ? 1 : -1;
-    const velocity = (intensity / 50) * direction;
+    const velocity = (intensity / 30) * direction;
 
     move(direction, velocity);
 }, { passive: true });
@@ -804,18 +804,18 @@ contentSection.addEventListener("touchend", e => {
     const timeTaken = Math.max(1, Date.now() - touchStartTime);
 
     const distance = Math.hypot(diffX, diffY);
-    if (distance > 20) {
+    if (distance > 15) {
         const speed = distance / timeTaken;
         const mainDiff = Math.abs(diffX) > Math.abs(diffY) ? diffX : diffY;
         const direction = mainDiff > 0 ? 1 : -1;
 
-        move(direction, speed * direction * 2);
+        move(direction, speed * direction * 3);
     }
 }, { passive: true });
 
 window.addEventListener("keydown", event => {
-    if (["ArrowRight", "ArrowDown"].includes(event.key)) move(1, 1.5);
-    if (["ArrowLeft", "ArrowUp"].includes(event.key)) move(-1, -1.5);
+    if (["ArrowRight", "ArrowDown"].includes(event.key)) move(1, 2);
+    if (["ArrowLeft", "ArrowUp"].includes(event.key)) move(-1, -2);
 });
 
 function createShootingStar() {
@@ -876,7 +876,9 @@ window.addEventListener("resize", () => {
     resizeTimer = setTimeout(() => {
         if (current >= 0) {
             const radius = getRadius();
-            gsap.set(planets[current], { x: 0, y: -radius });
+            const isMobile = window.matchMedia("(max-width: 600px)").matches;
+            const angle = isMobile ? (90 * (Math.PI / 180)) : (-90 * (Math.PI / 180));
+            gsap.set(planets[current], { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
         }
     }, 150);
 });
