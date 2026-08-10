@@ -17,6 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" type="image/jpeg" href="avatar.jpg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <style>
 :root {
@@ -31,10 +32,10 @@
     --purple: #9d7cff;
     --line: rgba(100, 145, 255, 0.24);
     --glow: rgba(90, 145, 255, 0.20);
-    --orbit-radius: 260px; /* Bán kính quỹ đạo */
+    --orbit-radius: 260px;
 }
 
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -106,7 +107,7 @@ body {
     align-items: center;
 }
 
-/* Sun Center - Ánh kim dịu mắt */
+/* Sun Center */
 .sun {
     position: absolute;
     width: 76px;
@@ -127,18 +128,17 @@ body {
     z-index: 1;
 }
 
-/* Orbit Ring Rotator - Tối ưu Easing & GPU */
+/* Orbit Ring Rotator */
 .orbit-rotator {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    /* Đổi từ 0.75s xuống 0.2s để chuyển động siêu nhanh */
-    transition: transform 0.75s cubic-bezier(0.1, 0.9, 0.2, 1);
     z-index: 3;
     will-change: transform;
 }
-/* Tăng tốc độ xoay ngược của từng hành tinh */
+
+/* 1. Đảm bảo hành tinh chưa active có z-index thấp */
 .planet-node {
     position: absolute;
     top: 50%;
@@ -152,11 +152,9 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    /* Đổi từ 0.75s xuống 0.2s */
-    transition: transform 0.75s cubic-bezier(0.1, 0.9, 0.2, 1);
     will-change: transform;
+    z-index: 10; /* Giữ các hành tinh ở mức nền chuẩn */
 }
-
 
 .planet-body {
     width: 100%;
@@ -169,14 +167,14 @@ body {
     justify-content: center;
     color: #fff;
     font-size: 17px;
-    transition: all 0.4s ease;
+    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
     border: 1.5px solid rgba(255, 255, 255, 0.35);
+    position: relative;
+    z-index: 1;
 }
 
-.planet-node.is-active .planet-body {
-    transform: scale(1.35);
-    border-color: #ffffff;
-    box-shadow: 0 0 25px var(--cyan), 0 0 35px var(--planet-glow);
+.planet-node.is-active {
+    z-index: 999 !important; /* Đẩy cả hành tinh active và card lên lớp cao nhất */
 }
 
 /* Pointer Arrow */
@@ -188,7 +186,7 @@ body {
     color: var(--cyan);
     font-size: 16px;
     opacity: 0;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s ease;
     animation: pointerBounce 1.2s infinite ease-in-out;
 }
 
@@ -201,19 +199,19 @@ body {
     50% { transform: translate(-50%, -6px); }
 }
 
-/* Card Popup */
+/* Circle Card */
 .circle-card {
     position: absolute;
-    width: 320px;
-    top: 55px;
-    left: 50%;
-    transform: translateX(-50%) scale(0.7);
+    width: 330px;
+    top: -20px;
+    left: 140px;
     border-radius: 16px;
     padding: 20px 18px;
-    background: radial-gradient(circle at 20% 10%, rgba(95,145,255,.18), transparent 40%), linear-gradient(145deg, rgba(10,18,43,.96), rgba(4,8,21,.98));
-    border: 1px solid var(--line);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 15px 50px rgba(0,0,0,0.8), 0 0 30px rgba(75,110,255,.18);
+    background: radial-gradient(circle at 20% 10%, rgba(95,145,255,.22), transparent 40%), linear-gradient(145deg, rgba(10,18,43,.98), rgba(4,8,21,.99));
+    border: 1px solid rgba(137, 165, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(75,110,255,.3);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -221,15 +219,15 @@ body {
     text-align: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
     will-change: transform, opacity;
-    z-index: 20;
 }
 
-.planet-node.is-active .circle-card {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-    pointer-events: auto;
+.planet-node:not(.is-active) .circle-card {
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .box-icon {
@@ -265,10 +263,12 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
 
 .achievement {
     list-style: none;
-    max-height: 180px;
+    max-height: 250px;
     overflow-y: auto;
     width: 100%;
-    padding-right: 2px;
+    padding-right: 6px;
+    touch-action: pan-y; /* Tối ưu lướt bằng tay trên điện thoại */
+    -webkit-overflow-scrolling: touch; /* Bật cuộn đà mượt trên iOS */
 }
 
 .achievement::-webkit-scrollbar { width: 3px; }
@@ -276,21 +276,24 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
 
 .achievement li {
     position: relative;
-    margin: 4px 0;
-    padding: 5px 8px 5px 10px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(137, 165, 255, 0.1);
-    border-radius: 6px;
-    font-size: 11.5px;
-    color: #b6c0d7;
+    margin: 6px 0;
+    padding: 8px 10px 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(137, 165, 255, 0.15);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #e1e7f5;
     text-align: left;
-    line-height: 1.3;
+    line-height: 1.4;
+    will-change: opacity;
 }
 
 .achievement li::before {
     content: "";
     position: absolute;
-    left: 0; top: 5px; bottom: 5px;
+    left: 4px;
+    top: 6px; 
+    bottom: 6px;
     width: 3px;
     border-radius: 2px;
     background: var(--blue-2);
@@ -308,7 +311,7 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
     align-items: center;
     justify-content: center;
     color: var(--white);
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 .links a:hover {
     background: rgba(120, 160, 255, 0.15);
@@ -317,10 +320,7 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
     box-shadow: 0 0 10px rgba(100, 230, 255, 0.3);
 }
 
-/* Ẩn bộ đếm an toàn */
-.controls {
-    display: none !important;
-}
+.controls { display: none !important; }
 
 .footer {
     position: fixed;
@@ -350,7 +350,7 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
     font-size: 12px;
     opacity: 0;
     pointer-events: none;
-    transition: 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
     z-index: 99;
 }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -394,14 +394,8 @@ body::before {
     width: var(--max-len, 180px);
     height: 3px;
     border-radius: 999px;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(80, 160, 255, 0.4) 15%,
-        rgba(120, 210, 255, 0.85) 50%,
-        rgba(255, 255, 255, 1) 100%);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 
-                0 0 20px rgba(90, 180, 255, 0.9),
-                0 0 35px rgba(60, 130, 255, 0.6);
+    background: linear-gradient(90deg, transparent 0%, rgba(80, 160, 255, 0.4) 15%, rgba(120, 210, 255, 0.85) 50%, rgba(255, 255, 255, 1) 100%);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(90, 180, 255, 0.9), 0 0 35px rgba(60, 130, 255, 0.6);
     transform-origin: right center;
     opacity: 0;
     animation: meteorFly var(--duration, 2s) cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
@@ -436,7 +430,7 @@ body::before {
     .sun { width: 56px; height: 56px; }
     .planet-node { width: 36px; height: 36px; margin-top: -18px; margin-left: -18px; }
     .planet-body { font-size: 14px; }
-    .circle-card { width: 270px; padding: 15px; top: 45px; }
+    .circle-card { width: 270px; padding: 15px; top: 45px; left: 50%; transform: translateX(-50%); }
 }
 </style>
 </head>
@@ -455,8 +449,7 @@ body::before {
         <div class="orbit-line"></div>
 
         <div class="orbit-rotator" id="orbitRotator">
-            
-            <!-- Hành tinh 0: Thông Tin - Xanh Dương Mát -->
+            <!-- Hành tinh 0: Thông Tin -->
             <div class="planet-node" data-index="0" style="--planet-color: linear-gradient(135deg, #70a1ff, #3742fa); --planet-glow: rgba(112, 161, 255, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-user-graduate"></i></div>
@@ -471,7 +464,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 1: Kỹ Năng - Xanh Mint -->
+            <!-- Hành tinh 1: Kỹ Năng -->
             <div class="planet-node" data-index="1" style="--planet-color: linear-gradient(135deg, #7bed9f, #2ed573); --planet-glow: rgba(123, 237, 159, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-code"></i></div>
@@ -490,7 +483,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 2: Competitive Programming - Tím Băng -->
+            <!-- Hành tinh 2: Competitive Programming -->
             <div class="planet-node" data-index="2" style="--planet-color: linear-gradient(135deg, #a8c0ff, #3f2b96); --planet-glow: rgba(168, 192, 255, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-laptop-code"></i></div>
@@ -507,7 +500,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 3: Thành Tựu Lớp 8 - Xanh Bầu Trời -->
+            <!-- Hành tinh 3: Thành Tựu Lớp 8 -->
             <div class="planet-node" data-index="3" style="--planet-color: linear-gradient(135deg, #74b9ff, #0984e3); --planet-glow: rgba(116, 185, 255, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-award"></i></div>
@@ -523,7 +516,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 4: Thành Tựu Lớp 9 - Xanh Ngọc -->
+            <!-- Hành tinh 4: Thành Tựu Lớp 9 -->
             <div class="planet-node" data-index="4" style="--planet-color: linear-gradient(135deg, #81ecec, #00cec9); --planet-glow: rgba(129, 236, 236, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-award"></i></div>
@@ -542,7 +535,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 5: Thành Tựu Lớp 10 - Vàng Kem -->
+            <!-- Hành tinh 5: Thành Tựu Lớp 10 -->
             <div class="planet-node" data-index="5" style="--planet-color: linear-gradient(135deg, #ffeaa7, #fdcb6e); --planet-glow: rgba(255, 234, 167, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-award"></i></div>
@@ -559,7 +552,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 6: Thành Tựu Lớp 11 - Tím Pastel -->
+            <!-- Hành tinh 6: Thành Tựu Lớp 11 -->
             <div class="planet-node" data-index="6" style="--planet-color: linear-gradient(135deg, #a29bfe, #6c5ce7); --planet-glow: rgba(162, 155, 254, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-award"></i></div>
@@ -575,7 +568,7 @@ body::before {
                 </article>
             </div>
 
-            <!-- Hành tinh 7: Liên Hệ - Hổ Phách Nhạt -->
+            <!-- Hành tinh 7: Liên Hệ -->
             <div class="planet-node" data-index="7" style="--planet-color: linear-gradient(135deg, #eccc68, #ffa502); --planet-glow: rgba(236, 204, 104, 0.4);">
                 <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
                 <div class="planet-body"><i class="fa-solid fa-address-card"></i></div>
@@ -598,7 +591,6 @@ body::before {
                     </div>
                 </article>
             </div>
-
         </div>
 
         <div class="controls">
@@ -614,13 +606,13 @@ body::before {
 <div id="toast"></div>
 
 <script>
-// Typing Title
+// Typing Title Animation
 const titleText = "Trần Đặng Phước Vinh";
 const typingElement = document.getElementById("typing-title");
 let typingIndex = 0;
 
-function typeTitle(){
-    if(typingIndex < titleText.length){
+function typeTitle() {
+    if (typingIndex < titleText.length) {
         typingElement.textContent += titleText.charAt(typingIndex);
         typingIndex++;
         setTimeout(typeTitle, 115);
@@ -630,22 +622,23 @@ function typeTitle(){
 }
 window.addEventListener("load", () => setTimeout(typeTitle, 250));
 
-/* --- SOLAR SYSTEM ROTATION LOGIC (OPTIMIZED & SMOOTH) --- */
+/* --- SOLAR SYSTEM ROTATION LOGIC --- */
 const planets = [...document.querySelectorAll(".planet-node")];
 const orbitRotator = document.getElementById("orbitRotator");
-const counter = document.getElementById("counter");
 const totalPlanets = planets.length;
 
 let current = 0;
-let totalRotationSteps = 0; // Biến cộng dồn số bước xoay
+let totalRotationSteps = 0;
 let locked = false;
 let touchStartX = 0;
 let touchStartY = 0;
-let blurTimeout;
+
+function getRadius() {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius')) || 260;
+}
 
 function positionPlanets() {
-    const radius = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius')) || 260;
-    
+    const radius = getRadius();
     planets.forEach((planet, index) => {
         const angle = (index * (360 / totalPlanets) - 90) * (Math.PI / 180);
         const x = Math.cos(angle) * radius;
@@ -667,24 +660,70 @@ function positionPlanets() {
 function render() {
     const stepAngle = 360 / totalPlanets;
     const targetAngle = -totalRotationSteps * stepAngle;
+    const radius = getRadius();
 
-    orbitRotator.style.transform = `rotate(${targetAngle}deg)`;
+    gsap.killTweensOf(orbitRotator);
+    gsap.to(orbitRotator, {
+        rotation: targetAngle,
+        duration: 0.45,
+        ease: "power2.out",
+        overwrite: "auto"
+    });
 
     planets.forEach((planet, index) => {
         const isActive = index === current;
         planet.classList.toggle("is-active", isActive);
 
-        const radius = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius')) || 260;
         const angle = (index * stepAngle - 90) * (Math.PI / 180);
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
 
-        planet.style.transform = `translate(${x}px, ${y}px) rotate(${-targetAngle}deg)`;
-    });
+        gsap.killTweensOf(planet);
+        gsap.to(planet, {
+            x: x,
+            y: y,
+            rotation: -targetAngle,
+            duration: 0.45,
+            ease: "power2.out",
+            overwrite: "auto"
+        });
 
-    if (counter) {
-        counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(totalPlanets).padStart(2, "0")}`;
-    }
+        const card = planet.querySelector(".circle-card");
+        if (card) {
+            gsap.killTweensOf(card);
+
+            if (isActive) {
+                // Hiệu ứng xuất hiện mượt mà, không bóp méo khung
+                gsap.fromTo(card, 
+                    { opacity: 0, y: 15, scale: 0.95, pointerEvents: "none" },
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        scale: 1, 
+                        duration: 0.35, 
+                        ease: "power2.out", 
+                        pointerEvents: "auto", 
+                        overwrite: "auto",
+                        onComplete: () => {
+                            // Reset cuộn về đầu trang mỗi khi mở thẻ mới
+                            const achList = card.querySelector('.achievement');
+                            if (achList) achList.scrollTop = 0;
+                        }
+                    }
+                );
+            } else {
+                gsap.to(card, { 
+                    opacity: 0, 
+                    y: -10, 
+                    scale: 0.95, 
+                    duration: 0.2, 
+                    ease: "power1.in", 
+                    pointerEvents: "none", 
+                    overwrite: "auto" 
+                });
+            }
+        }
+    });
 }
 
 function move(step) {
@@ -692,29 +731,22 @@ function move(step) {
     locked = true;
 
     totalRotationSteps += step;
-    
     current = (current + step) % totalPlanets;
     if (current < 0) current += totalPlanets;
 
     render();
-
-    // Rút ngắn thời gian khóa từ 350ms xuống 100ms để vuốt/cuộn nhạy ngay lập tức
     setTimeout(() => { locked = false; }, 150);
-}   
+} 
 
-/* --- TỐI ƯU CUỘN CHUỘT (PC) --- */
+/* --- EVENT LISTENERS --- */
 let wheelCooldown = false;
 window.addEventListener("wheel", event => {
     if (wheelCooldown || Math.abs(event.deltaY) < 5) return;
-    
     wheelCooldown = true;
-    if (event.deltaY > 0) move(1);
-    else move(-1);
-
-    // Giảm xuống 80ms để nhăn chuột tới đâu hành tinh xoay tới đó
+    move(event.deltaY > 0 ? 1 : -1);
     setTimeout(() => { wheelCooldown = false; }, 80);
 }, { passive: true });
-/* --- TỐI ƯU CẢM ỨNG (MOBILE) --- */
+
 const contentSection = document.getElementById("content-section");
 
 contentSection.addEventListener("touchstart", e => {
@@ -723,42 +755,31 @@ contentSection.addEventListener("touchstart", e => {
 }, { passive: true });
 
 contentSection.addEventListener("touchmove", e => {
-    // Ngăn giật/trôi trang web điện thoại khi lướt
     if (e.cancelable) e.preventDefault(); 
 }, { passive: false });
 
 contentSection.addEventListener("touchend", e => {
     if (!touchStartX || !touchStartY) return;
 
-    let touchEndX = e.changedTouches[0].clientX;
-    let touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartX - e.changedTouches[0].clientX;
+    const diffY = touchStartY - e.changedTouches[0].clientY;
 
-    let diffX = touchStartX - touchEndX;
-    let diffY = touchStartY - touchEndY;
-
-    // Giảm ngưỡng vuốt xuống 15px để chỉ cần nhích nhẹ ngón tay là chuyển ngay
     if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > 15) {
-            if (diffX > 0) move(1);
-            else move(-1);
-        }
+        if (Math.abs(diffX) > 15) move(diffX > 0 ? 1 : -1);
     } else {
-        if (Math.abs(diffY) > 15) {
-            if (diffY > 0) move(1);
-            else move(-1);
-        }
+        if (Math.abs(diffY) > 15) move(diffY > 0 ? 1 : -1);
     }
 
     touchStartX = 0;
     touchStartY = 0;
 }, { passive: true });
-/* --- BÀN PHÍM --- */
+
 window.addEventListener("keydown", event => {
     if (["ArrowRight", "ArrowDown"].includes(event.key)) move(1);
     if (["ArrowLeft", "ArrowUp"].includes(event.key)) move(-1);
 });
 
-/* --- SHOOTING STARS LOGIC --- */
+/* --- SHOOTING STARS --- */
 function createShootingStar() {
     const container = document.querySelector(".shooting-stars");
     if (!container) return;
@@ -768,30 +789,20 @@ function createShootingStar() {
 
     const startX = Math.random() * 100;
     const startY = Math.random() * 100;
-
     const angleRad = Math.random() * Math.PI * 2;
     const angleDeg = angleRad * (180 / Math.PI);
-
     const distance = 160 + Math.random() * 240;
-    const tx = Math.cos(angleRad) * distance;
-    const ty = Math.sin(angleRad) * distance;
-
-    const maxLen = 140 + Math.random() * 100;
-    const duration = 1.2 + Math.random() * 0.8;
 
     star.style.left = `${startX}vw`;
     star.style.top = `${startY}vh`;
     star.style.setProperty("--angle", `${angleDeg}deg`);
-    star.style.setProperty("--tx", `${tx}px`);
-    star.style.setProperty("--ty", `${ty}px`);
-    star.style.setProperty("--max-len", `${maxLen}px`);
-    star.style.setProperty("--duration", `${duration}s`);
+    star.style.setProperty("--tx", `${Math.cos(angleRad) * distance}px`);
+    star.style.setProperty("--ty", `${Math.sin(angleRad) * distance}px`);
+    star.style.setProperty("--max-len", `${140 + Math.random() * 100}px`);
+    star.style.setProperty("--duration", `${1.2 + Math.random() * 0.8}s`);
 
     container.appendChild(star);
-
-    setTimeout(() => {
-        star.remove();
-    }, duration * 1000);
+    setTimeout(() => star.remove(), 2000);
 }
 
 function randomShootingStar() {
@@ -803,7 +814,7 @@ function randomShootingStar() {
 
 randomShootingStar();
 
-function copyText(text){
+function copyText(text) {
     navigator.clipboard.writeText(text);
     const toast = document.getElementById("toast");
     toast.textContent = "Đã sao chép: " + text;
@@ -811,9 +822,10 @@ function copyText(text){
     setTimeout(() => toast.classList.remove("show"), 2000);
 }
 
-// Khởi tạo ban đầu
-positionPlanets();
-render();
+document.fonts.ready.then(() => {
+    positionPlanets();
+    render();
+});
 
 window.addEventListener("resize", () => {
     positionPlanets();
