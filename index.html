@@ -11,7 +11,6 @@
 <meta name="robots" content="index,follow">
 <meta name="keywords" content="Trần Đặng Phước Vinh, Competitive Programmer, Web Developer, Tin học">
 <meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh - Student, Competitive Programmer, Web Developer">
-<meta name="theme-color" content="#02040b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -44,17 +43,13 @@
 html {
     scroll-behavior: smooth;
     overscroll-behavior: none;
-}
-
-html {
-    scroll-behavior: smooth;
-    overscroll-behavior: none;
-    background-color: #01020a; /* Khóa màu nền gốc của HTML */
+    background-color: #01020a;
+    height: 100%;
 }
 
 body {
     min-height: 100vh;
-    min-height: 100dvh; /* Sử dụng dynamic viewport height để chuẩn xác trên mobile */
+    min-height: 100dvh;
     color: var(--white);
     font-family: 'Be Vietnam Pro', sans-serif;
     overflow: hidden;
@@ -66,10 +61,7 @@ body {
         radial-gradient(ellipse 55% 65% at 5% 80%, rgba(20, 80, 165, .20), transparent 72%),
         radial-gradient(ellipse 45% 40% at 50% 75%, rgba(115, 40, 165, .14), transparent 75%),
         linear-gradient(180deg, #01020a 0%, #05091d 40%, #09051b 72%, #01020a 100%);
-    background-attachment: fixed; /* Giữ cố định background trên thiết bị di động */
 }
-
-
 
 .profile {
     padding: 15px 20px 5px;
@@ -100,7 +92,7 @@ body {
     position: relative;
     width: 100%;
     height: calc(100vh - 120px);
-    height: calc(100dvh - 120px); /* Tương thích với 100dvh */
+    height: calc(100dvh - 120px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -135,7 +127,7 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 1px dashed rgba(100, 145, 255, 0.2);
+    border: 1px dashed rgb(248, 250, 255);
     z-index: 1;
 }
 
@@ -207,7 +199,6 @@ body {
     50% { transform: translate(-50%, -6px); }
 }
 
-/* Morph & Floating Card */
 .circle-card {
     position: absolute;
     width: 330px;
@@ -362,23 +353,27 @@ a:hover { color: #b7c9ff; text-decoration: underline; }
 }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* BẦU TRỜI ĐẦY SAO LUNG LINH (TĂNG ĐỘ PHỦ) */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
-    opacity: .82;
+    opacity: .95;
     background-image:
-        radial-gradient(circle at 8% 14%, rgba(255,255,255,.95) 0 1px, transparent 2px),
-        radial-gradient(circle at 18% 72%, rgba(150,210,255,.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 28% 31%, rgba(255,255,255,.9) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 39% 82%, rgba(190,170,255,.75) 0 1px, transparent 2px),
-        radial-gradient(circle at 52% 19%, rgba(255,255,255,.95) 0 1px, transparent 2px),
-        radial-gradient(circle at 63% 64%, rgba(130,205,255,.8) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 74% 27%, rgba(255,255,255,.9) 0 1px, transparent 2px),
-        radial-gradient(circle at 86% 78%, rgba(190,170,255,.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 94% 12%, rgba(255,255,255,.9) 0 1px, transparent 2px);
-    background-size: 145px 155px,185px 175px,220px 205px,260px 240px,175px 190px,230px 220px,200px 210px,280px 260px,165px 180px;
+        radial-gradient(circle at 5% 10%, rgba(255,255,255,1) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 15% 45%, rgba(150,210,255,.9) 0 1.5px, transparent 2px),
+        radial-gradient(circle at 25% 85%, rgba(255,255,255,.95) 0 1px, transparent 2px),
+        radial-gradient(circle at 35% 25%, rgba(190,170,255,.9) 0 1.4px, transparent 2px),
+        radial-gradient(circle at 45% 65%, rgba(255,255,255,1) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 55% 15%, rgba(130,205,255,.9) 0 1.5px, transparent 2px),
+        radial-gradient(circle at 65% 90%, rgba(255,255,255,.95) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 75% 35%, rgba(190,170,255,.9) 0 1.4px, transparent 2px),
+        radial-gradient(circle at 85% 70%, rgba(255,255,255,1) 0 1.5px, transparent 2px),
+        radial-gradient(circle at 95% 20%, rgba(150,210,255,.9) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 10% 80%, rgba(255,255,255,.8) 0 1px, transparent 2px),
+        radial-gradient(circle at 90% 50%, rgba(255,255,255,.85) 0 1.2px, transparent 2px);
+    background-size: 120px 130px, 160px 150px, 190px 180px, 220px 210px, 140px 160px, 200px 190px, 170px 180px, 240px 230px, 150px 140px, 210px 200px, 130px 140px, 180px 170px;
     z-index: -1;
 }
 
@@ -417,7 +412,6 @@ body::before {
     .planet-body { font-size: 14px; }
     .circle-card { width: 270px; padding: 15px; top: 45px; left: 50%; transform: translateX(-50%) scale(0.6); }
     .circle-card.is-rendered { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-    .shooting-star { box-shadow: 0 0 6px rgba(255, 255, 255, 0.9), 0 0 14px rgba(90, 180, 255, 0.7); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -586,7 +580,6 @@ body::before {
 <div id="toast"></div>
 
 <script>
-// Typing Title
 const titleText = "Trần Đặng Phước Vinh";
 const typingElement = document.getElementById("typing-title");
 let typingIndex = 0;
@@ -602,7 +595,6 @@ function typeTitle() {
 }
 window.addEventListener("load", () => setTimeout(typeTitle, 200));
 
-/* --- HIGH-SPEED ROTATION & VELOCITY DYNAMICS --- */
 const planets = [...document.querySelectorAll(".planet-node")];
 const solarSystem = document.getElementById("solarSystem");
 const totalPlanets = planets.length;
@@ -645,7 +637,6 @@ function positionPlanets() {
 }
 
 function render(velocity = 1) {
-    // 1. MORPH OUT: Thu nhỏ cực nhanh các card không active
     planets.forEach((planet, index) => {
         const card = planet.querySelector(".circle-card");
         planet.classList.toggle("is-active", index === current);
@@ -662,12 +653,10 @@ function render(velocity = 1) {
         }
     });
 
-    // Tính thời gian chuyển động dựa vào vận tốc vuốt
     const animDuration = Math.max(0.18, Math.min(0.38, 0.38 / Math.abs(velocity)));
     const targetSkew = Math.max(-12, Math.min(12, velocity * 4));
     const targetRotation = Math.max(-15, Math.min(15, velocity * 5));
 
-    // 2. TẠO HIỆU ỨNG NỔI/NGHIÊNG THEO LỰC VUỐT HỆ MẶT TRỜI
     gsap.to(solarSystem, {
         rotation: targetRotation,
         skewX: targetSkew,
@@ -681,7 +670,6 @@ function render(velocity = 1) {
         }
     });
 
-    // 3. XOAY HỆ MẶT TRỜI VÀ MỞ CARD ACTIVE
     const proxy = { v: visualSteps };
     gsap.to(proxy, {
         v: totalRotationSteps,
@@ -698,7 +686,6 @@ function render(velocity = 1) {
             const activePlanet = planets[current];
             const card = activePlanet.querySelector(".circle-card");
             if (card) {
-                // Hiệu ứng NỔI BẬT NÂNG CẤP cho Card khi mở ra
                 gsap.fromTo(card, 
                     {
                         scale: 0.2,
@@ -730,22 +717,20 @@ function move(step, velocity = 1) {
     totalRotationSteps += step;
     current = (current + step) % totalPlanets;
     if (current < 0) current += totalPlanets;
-
     render(velocity);
 }
 
-/* --- TỐC ĐỘ CUỘN & CẢM ỨNG SIÊU NHẠY --- */
 let wheelCooldown = false;
 window.addEventListener("wheel", event => {
     if (event.target.closest('.achievement')) return;
     if (wheelCooldown) return;
 
     wheelCooldown = true;
-    setTimeout(() => { wheelCooldown = false; }, 80); // Độ trễ ngắn cho tốc độ cực cao
+    setTimeout(() => { wheelCooldown = false; }, 80);
 
     const intensity = Math.abs(event.deltaY);
     let stepCount = 1;
-    if (intensity > 120) stepCount = 2; // Nhảy 2 bước nếu lăn mạnh
+    if (intensity > 120) stepCount = 2;
 
     const direction = event.deltaY > 0 ? 1 : -1;
     const velocity = (intensity / 50) * direction;
@@ -753,10 +738,8 @@ window.addEventListener("wheel", event => {
     move(direction * stepCount, velocity);
 }, { passive: true });
 
-/* Cảm ứng vuốt siêu mượt */
 let touchStartX = 0, touchStartY = 0;
 let touchStartTime = 0;
-
 const contentSection = document.getElementById("content-section");
 
 contentSection.addEventListener("touchstart", e => {
@@ -775,10 +758,8 @@ contentSection.addEventListener("touchend", e => {
 
     const distance = Math.hypot(diffX, diffY);
     if (distance > 20) {
-        // Tính vận tốc
-        const speed = distance / timeTaken; // px/ms
+        const speed = distance / timeTaken;
         let stepCount = speed > 1.2 ? 2 : 1;
-
         const mainDiff = Math.abs(diffX) > Math.abs(diffY) ? diffX : diffY;
         const direction = mainDiff > 0 ? 1 : -1;
         
@@ -791,7 +772,6 @@ window.addEventListener("keydown", event => {
     if (["ArrowLeft", "ArrowUp"].includes(event.key)) move(-1, -1.5);
 });
 
-/* --- SHOOTING STARS --- */
 function createShootingStar() {
     const container = document.querySelector(".shooting-stars");
     if (!container) return;
@@ -818,7 +798,7 @@ function createShootingStar() {
 
 const isSmallScreen = window.matchMedia("(max-width: 600px)").matches;
 let activeStars = 0;
-const maxConcurrentStars = isSmallScreen ? 1 : 3;
+const maxConcurrentStars = isSmallScreen ? 2 : 4;
 
 function randomShootingStar() {
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && activeStars < maxConcurrentStars) {
@@ -826,7 +806,7 @@ function randomShootingStar() {
         createShootingStar();
         setTimeout(() => { activeStars--; }, 2000);
     }
-    const gap = isSmallScreen ? 2600 + Math.random() * 1400 : 2000 + Math.random() * 1000;
+    const gap = isSmallScreen ? 2000 + Math.random() * 1000 : 1500 + Math.random() * 800;
     setTimeout(randomShootingStar, gap);
 }
 
@@ -855,4 +835,4 @@ window.addEventListener("resize", () => {
 });
 </script>
 </body>
-</html>
+</html>      
