@@ -1,889 +1,703 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<title>Trần Đặng Phước Vinh | Portfolio</title>
+<title>Trần Đặng Phước Vinh — Portfolio</title>
 
 <meta name="author" content="Trần Đặng Phước Vinh">
-<meta name="theme-color" content="#02040b">
+<!-- Theme color tự động thay đổi theo light/dark -->
+<meta name="theme-color" content="#F5F3FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0914" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="index,follow">
-<meta name="keywords" content="Trần Đặng Phước Vinh, Competitive Programmer, Web Developer, Tin học">
-<meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh - Student, Competitive Programmer, Web Developer">
+<meta name="keywords" content="Trần Đặng Phước Vinh, Competitive Programmer, Web Developer, Tin học, THPT U Minh, Cà Mau">
+<meta name="description" content="Trang giới thiệu bản thân của Trần Đặng Phước Vinh — Student, Competitive Programmer, Web Developer tại THPT U Minh, Cà Mau">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<!-- Thay bằng link ảnh thật của bạn -->
 <link rel="icon" type="image/jpeg" href="avatar.jpg">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <style>
+/* CSS Variables - Light Theme */
 :root {
-    --space: #02030a;
-    --space-card: rgba(8, 15, 35, 0.88);
-    --white: #f5f8ff;
-    --muted: #9aa8c7;
-    --blue: #6ea8ff;
-    --blue-2: #4f6dff;
-    --cyan: #5ee7ff;
-    --gold: #ffd66b;
-    --purple: #9d7cff;
-    --line: rgba(100, 145, 255, 0.24);
-    --glow: rgba(90, 145, 255, 0.20);
-    --orbit-radius: 260px;
+  --bg: #F5F3FF;
+  --bg-2: #EFEBFF;
+  --card: #FFFFFF;
+  --ink: #1A1523;
+  --muted: #6E6780;
+  --line: rgba(26,21,35,0.08);
+
+  --violet: #6C4DF6;
+  --violet-soft: #EDE7FF;
+  --coral: #FF6B57;
+  --coral-soft: #FFE7E2;
+  --mint: #12B88C;
+  --mint-soft: #DEFBF1;
+  --sun: #FFB100;
+  --sun-soft: #FFF3D6;
+
+  --display: 'Baloo 2', 'Be Vietnam Pro', sans-serif;
+  --body: 'Be Vietnam Pro', sans-serif;
+  --r-lg: 28px;
+  --r-md: 20px;
+  --r-sm: 14px;
 }
 
-*, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* CSS Variables - Dark Theme */
+[data-theme="dark"] {
+  --bg: #0F0914;
+  --bg-2: #1A1325;
+  --card: #15101D;
+  --ink: #F5F3FF;
+  --muted: #A09AB0;
+  --line: rgba(255,255,255,0.08);
+
+  --violet-soft: rgba(108, 77, 246, 0.15);
+  --coral-soft: rgba(255, 107, 87, 0.15);
+  --mint-soft: rgba(18, 184, 140, 0.15);
+  --sun-soft: rgba(255, 177, 0, 0.15);
 }
 
-html {
-    scroll-behavior: smooth;
-    overscroll-behavior: none;
-    background-color: #01020a;
-    height: 100%;
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { 
+  scroll-behavior: smooth; 
+  /* Cực kỳ quan trọng: Giúp khi ấn menu không bị navbar che mất tiêu đề */
+  scroll-padding-top: 85px; 
 }
 
 body {
-    min-height: 100vh;
-    min-height: 100dvh;
-    color: var(--white);
-    font-family: 'Be Vietnam Pro', sans-serif;
-    overflow: hidden;
-    overscroll-behavior: none;
-    position: relative;
-    background:
-        radial-gradient(ellipse 75% 55% at 50% 5%, rgba(75, 85, 190, .28), transparent 68%),
-        radial-gradient(ellipse 50% 60% at 90% 35%, rgba(95, 40, 170, .22), transparent 72%),
-        radial-gradient(ellipse 55% 65% at 5% 80%, rgba(20, 80, 165, .20), transparent 72%),
-        radial-gradient(ellipse 45% 40% at 50% 75%, rgba(115, 40, 165, .14), transparent 75%),
-        linear-gradient(180deg, #01020a 0%, #05091d 40%, #09051b 72%, #01020a 100%);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.profile {
-    padding: 15px 20px 5px;
-    text-align: center;
-    position: relative;
-    z-index: 10;
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 40% at 8% 0%, rgba(108,77,246,0.1), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 95% 15%, rgba(255,107,87,0.08), transparent 60%),
+    radial-gradient(ellipse 40% 35% at 50% 100%, rgba(18,184,140,0.08), transparent 65%);
 }
 
-.profile h1 {
-    font-size: clamp(28px, 4vw, 50px);
-    font-weight: 800;
-    letter-spacing: -1px;
-    min-height: 1.2em;
-    border-right: 3px solid var(--blue);
-    display: inline-block;
-    color: #ffffff;
-    text-shadow: 0 0 18px rgba(105,165,255,.34), 0 0 55px rgba(70,95,255,.20);
+.wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--violet); color: #fff; }
+
+/* ---------------- nav ---------------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg); /* Fallback */
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s ease;
+}
+.nav-inner {
+  max-width: 1040px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { font-family: var(--display); font-weight: 700; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+.brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--violet); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-links { display: flex; gap: 4px; }
+.nav-links a {
+  font-size: 13.5px; font-weight: 600; color: var(--muted);
+  padding: 8px 13px; border-radius: 100px; transition: .2s ease;
+}
+.nav-links a:hover { background: var(--violet-soft); color: var(--violet); }
+.nav-cta {
+  background: var(--ink); color: var(--bg) !important; font-weight: 700; font-size: 13px;
+  padding: 9px 16px; border-radius: 100px; transition: transform .2s ease, opacity .2s ease;
+}
+.nav-cta:hover { transform: translateY(-2px); opacity: 0.9; }
+
+/* Dark mode toggle button */
+#theme-toggle {
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
+  width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+}
+#theme-toggle:hover { background: var(--violet-soft); color: var(--violet); border-color: var(--violet); transform: rotate(15deg); }
+
+@media (max-width: 640px) { .nav-links { display: none; } }
+
+/* ---------------- hero ---------------- */
+.hero { padding: 56px 0 20px; }
+.hero-inner {
+  display: flex; align-items: center; gap: 44px; text-align: left;
+}
+.avatar-wrap { flex-shrink: 0; }
+.avatar-photo {
+  width: 190px; height: 190px; border-radius: 50%; overflow: hidden;
+  box-shadow: 0 22px 48px -20px rgba(108,77,246,0.4);
+}
+.avatar-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.avatar-fallback {
+  width: 100%; height: 100%; border-radius: 50%; background: var(--violet-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 44px; font-weight: 700; color: var(--violet);
+}
+.hero-content { flex: 1; min-width: 0; }
+
+.hero h1 {
+  font-family: var(--display); font-weight: 800; letter-spacing: -0.5px;
+  font-size: clamp(30px, 5.5vw, 50px); line-height: 1.1; margin-bottom: 12px;
+}
+.chip-row { display: flex; gap: 8px; justify-content: flex-start; flex-wrap: wrap; margin-bottom: 18px; }
+.chip {
+  font-size: 13px; font-weight: 700; padding: 7px 14px; border-radius: 100px;
+  border: 1.5px solid var(--line); background: var(--card);
+}
+.chip.c-violet { color: var(--violet); border-color: rgba(108,77,246,0.25); background: var(--violet-soft); }
+.chip.c-coral { color: var(--coral); border-color: rgba(255,107,87,0.25); background: var(--coral-soft); }
+.chip.c-mint { color: var(--mint); border-color: rgba(18,184,140,0.25); background: var(--mint-soft); }
+
+.hero p.tagline { max-width: 480px; margin: 0 0 26px; color: var(--muted); font-size: 15.5px; }
+
+.hero-cta { display: flex; gap: 12px; justify-content: flex-start; flex-wrap: wrap; }
+
+@media (max-width: 680px) {
+  .hero-inner { flex-direction: column; text-align: center; gap: 22px; }
+  .chip-row, .hero-cta { justify-content: center; }
+  .hero p.tagline { margin: 0 auto 26px; }
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 700; font-size: 14px; padding: 13px 22px; border-radius: 100px;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  cursor: pointer;
+}
+.btn-primary { background: var(--ink); color: var(--bg); box-shadow: 0 10px 24px -10px rgba(26,21,35,0.5); }
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 28px -10px rgba(26,21,35,0.55); }
+.btn-ghost { background: var(--card); border: 1.5px solid var(--line); color: var(--ink); }
+.btn-ghost:hover { transform: translateY(-3px); border-color: var(--violet); color: var(--violet); }
+
+/* ---------------- story highlights ---------------- */
+.stories {
+  display: flex; gap: 20px; justify-content: center; padding: 36px 0 8px;
+  flex-wrap: wrap;
+}
+.story {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; background: none; border: none; font-family: var(--body);
+}
+.story-ring {
+  width: 66px; height: 66px; border-radius: 50%; padding: 3px;
+  background: conic-gradient(from 45deg, var(--coral), var(--sun));
+  transition: transform .2s ease;
+}
+.story:nth-child(2) .story-ring { background: conic-gradient(from 45deg, var(--violet), var(--mint)); }
+.story:nth-child(3) .story-ring { background: conic-gradient(from 45deg, var(--mint), var(--violet)); }
+.story:nth-child(4) .story-ring { background: conic-gradient(from 45deg, var(--sun), var(--coral)); }
+.story:hover .story-ring { transform: scale(1.08); }
+.story:focus-visible .story-ring { outline: 2px solid var(--violet); outline-offset: 3px; }
+.story-inner {
+  width: 100%; height: 100%; border-radius: 50%; background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-weight: 700; font-size: 19px; color: var(--ink);
+  border: 3px solid var(--bg);
+}
+.story-label { font-size: 12.5px; font-weight: 700; color: var(--muted); transition: color .2s; }
+.story.is-active .story-label { color: var(--violet); }
+.story.is-active .story-ring { animation: spin 4s linear infinite; }
+
+/* ---------------- section shell ---------------- */
+section { padding: 44px 0; }
+.section-head { margin-bottom: 20px; }
+.eyebrow {
+  display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--violet); background: var(--violet-soft);
+  padding: 5px 12px; border-radius: 100px; margin-bottom: 10px;
+}
+.section-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(22px,3.4vw,30px); }
+
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ---------------- bento grid ---------------- */
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.card {
+  background: var(--card); border-radius: var(--r-md); padding: 22px;
+  border: 1px solid var(--line);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  position: relative; overflow: hidden;
+}
+.card:hover { 
+  transform: translateY(-4px); 
+  box-shadow: 0 16px 30px -15px rgba(26,21,35,0.15); 
+  border-color: rgba(108,77,246,0.3); /* Hiệu ứng viền tím nhẹ khi hover */
+}
+.span-2 { grid-column: span 2; }
+.span-4 { grid-column: span 4; }
+.row-2 { grid-row: span 2; }
+@media (max-width: 760px) {
+  .bento { grid-template-columns: repeat(2,1fr); }
+  .span-4 { grid-column: span 2; }
+}
+@media (max-width: 480px) {
+  .bento { grid-template-columns: 1fr; }
+  .span-2, .span-4 { grid-column: span 1; }
 }
 
-.profile h3 {
-    margin-top: 4px;
-    color: var(--muted);
-    font-size: clamp(12px, 1.5vw, 15px);
-    font-weight: 400;
-}
+/* stat cards */
+.stat-card { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 2px; }
+.stat-num { font-family: var(--display); font-weight: 800; font-size: 38px; line-height: 1; }
+.stat-label { font-size: 13px; font-weight: 600; }
+.stat-card.bg-violet { background: var(--violet); color: #fff; border:none; }
+.stat-card.bg-violet .stat-label { color: rgba(255,255,255,0.8); }
+.stat-card.bg-coral { background: var(--coral); color: #fff; border:none;}
+.stat-card.bg-coral .stat-label { color: rgba(255,255,255,0.85); }
+.stat-card.bg-mint { background: var(--mint); color: #fff; border:none;}
+.stat-card.bg-mint .stat-label { color: rgba(255,255,255,0.85); }
+.stat-card.bg-sun { background: var(--sun); color: #2b1c00; border:none;}
+.stat-card.bg-sun .stat-label { color: rgba(43,28,0,0.7); }
 
-.content-section {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 120px);
-    height: calc(100dvh - 120px);
-    display: flex;
-    justify-content: center;
-    padding: 10px 20px;
-    touch-action: none;
-    -webkit-tap-highlight-color: transparent;
-}
+/* about card */
+.about-card h3 { font-family: var(--display); font-size: 17px; margin-bottom: 12px; }
+.field-list { display: flex; flex-direction: column; gap: 10px; }
+.field-row { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; padding-bottom: 10px; border-bottom: 1px dashed var(--line); }
+.field-row:last-child { border-bottom: none; padding-bottom: 0; }
+.field-row .k { color: var(--muted); font-weight: 600; }
+.field-row .v { font-weight: 700; text-align: right; }
 
-.solar-system {
-    position: fixed;
-    bottom: calc(var(--orbit-radius) * -1 + 300px); 
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(var(--orbit-radius) * 2);
-    height: calc(var(--orbit-radius) * 2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform-style: preserve-3d;
-    will-change: transform;
-    z-index: 5;
+/* skills card */
+.skill-group { margin-bottom: 14px; }
+.skill-group:last-child { margin-bottom: 0; }
+.skill-group-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.pill {
+  font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 100px;
+  background: var(--bg-2); color: var(--ink); border: 1px solid var(--line);
+  transition: background 0.2s; cursor: default;
 }
+.pill:hover { background: var(--violet-soft); color: var(--violet); border-color: transparent; }
 
-.sun {
-    position: absolute;
-    width: 350px;
-    height: 350px;
-    border-radius: 50%;
-    background-image: url('avatar.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    box-shadow: 
-        inset 0 0 60px rgba(0, 0, 0, 0.4),
-        0 0 50px rgba(253, 203, 110, 0.6),
-        0 0 100px rgba(255, 107, 107, 0.3);
-    z-index: 2;
+/* judge / link cards */
+.link-card { display: flex; align-items: center; gap: 14px; text-align: left; }
+.link-avatar {
+  width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 19px; color: #fff;
 }
+.link-avatar.bg-violet { background: var(--violet); }
+.link-avatar.bg-coral { background: var(--coral); }
+.link-avatar.bg-mint { background: var(--mint); }
+.link-title { font-weight: 800; font-size: 14.5px; }
+.link-sub { font-size: 12.5px; color: var(--muted); }
+.link-arrow { margin-left: auto; color: var(--muted); transition: transform 0.2s, color 0.2s; }
+.link-card:hover .link-arrow { transform: translate(3px, -3px); color: var(--violet); }
 
-.orbit-line {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 1px dashed rgba(248, 250, 255, 0.4);
-    z-index: 1;
+/* achievement year panels */
+.year-panel { display: none; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.year-panel.is-active { display: block; }
+.achv-card { padding: 0; overflow: hidden; }
+.achv-head {
+  padding: 16px 22px; display: flex; align-items: center; justify-content: space-between;
+  background: var(--violet-soft);
 }
-
-.orbit-rotator {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    z-index: 3;
+.achv-head h3 { font-family: var(--display); font-size: 18px; color: var(--violet); }
+.achv-head span { font-size: 12.5px; font-weight: 700; color: var(--violet); }
+.achv-list { padding: 8px 12px 14px; }
+.achv-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 10px; border-radius: 12px;
+  transition: background .15s ease;
 }
+.achv-item:hover { background: var(--bg-2); }
+.achv-emoji { font-size: 20px; flex-shrink: 0; }
+.achv-text { font-size: 14px; font-weight: 600; flex: 1; }
+.achv-tag { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 100px; flex-shrink: 0; }
+.tag-gold { background: var(--mint-soft); color: var(--mint); }
+.tag-silver { background: var(--violet-soft); color: var(--violet); }
+.tag-bronze { background: var(--coral-soft); color: var(--coral); }
+.tag-kk { background: var(--sun-soft); color: #b07e00; }
+[data-theme="dark"] .tag-kk { color: #ffd666; } /* Fix màu vàng trên nền tối */
 
-.planet-node {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 44px;
-    height: 44px;
-    margin-top: -22px;
-    margin-left: -22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    will-change: transform;
-    -webkit-tap-highlight-color: transparent;
-    visibility: hidden; /* Mặc định ẩn hoàn toàn để không cản trở Sun */
-    z-index: 10;
+/* contact links list */
+.contact-list { display: flex; flex-direction: column; gap: 10px; }
+.contact-btn {
+  display: flex; align-items: center; gap: 14px; padding: 15px 18px;
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 100px;
+  font-weight: 700; font-size: 14.5px; color: var(--ink);
+  transition: all .2s ease; cursor: pointer; text-align: left; width: 100%;
 }
-
-.planet-body {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: var(--planet-color, var(--blue-2));
-    box-shadow: 0 0 15px var(--planet-glow, rgba(79, 109, 255, 0.4));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 22px;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    position: relative;
-    z-index: 1;
+.contact-btn:hover { transform: translateY(-3px); border-color: var(--violet); box-shadow: 0 8px 20px -10px rgba(108,77,246,0.2); }
+.contact-btn .ic {
+  width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 15px; flex-shrink: 0;
 }
+.contact-btn small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; margin-top: 1px; }
+.contact-btn .copy-hint { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--muted); transition: color 0.2s; }
+.contact-btn:hover .copy-hint { color: var(--violet); }
 
-.planet-node.is-active {
-    z-index: 999 !important;
-}
-
-.planet-pointer {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--cyan);
-    font-size: 16px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    animation: pointerBounce 1.2s infinite ease-in-out;
-}
-
-.planet-node.is-active .planet-pointer {
-    opacity: 1;
-}
-
-@keyframes pointerBounce {
-    0%, 100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, -6px); }
-}
-
-.circle-card {
-    position: absolute;
-    width: 380px;
-    top: -20px;
-    left: 80px;
-    border-radius: 16px;
-    padding: 22px 20px;
-    background: rgba(8, 14, 32, 0.96);
-    border: 1px solid rgba(137, 165, 255, 0.25);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(75,110,255,.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    z-index: 1000;
-    -webkit-font-smoothing: antialiased;
-    transform: scale(0.6);
-    transform-origin: center left;
-    will-change: transform, opacity, filter;
-}
-
-.circle-card.is-rendered {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-.planet-node:not(.is-active) .circle-card {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
-
-.box-icon {
-    font-size: 32px;
-    color: var(--cyan);
-    margin-bottom: 6px;
-    filter: drop-shadow(0 0 8px rgba(95,170,255,.6));
-}
-
-.box-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.box-content h2 {
-    font-size: 16px;
-    margin-bottom: 6px;
-    color: var(--white);
-}
-
-.box-content p {
-    font-size: 12.5px;
-    color: var(--muted);
-    margin: 3px 0;
-    line-height: 1.4;
-}
-
-b { color: var(--white); }
-a { color: var(--blue); text-decoration: none; font-weight: 700; }
-a:hover { color: #b7c9ff; text-decoration: underline; }
-
-.achievement {
-    list-style: none;
-    max-height: 250px;
-    overflow-y: auto;
-    width: 100%;
-    padding-right: 6px;
-    touch-action: pan-y;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-}
-
-.achievement::-webkit-scrollbar { width: 3px; }
-.achievement::-webkit-scrollbar-thumb { background: rgba(120,160,255,.3); border-radius: 4px; }
-
-.achievement li {
-    position: relative;
-    margin: 6px 0;
-    padding: 8px 10px 8px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(137, 165, 255, 0.15);
-    border-radius: 8px;
-    font-size: 12px;
-    color: #e1e7f5;
-    text-align: left;
-    line-height: 1.4;
-}
-
-.achievement li::before {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 6px; 
-    bottom: 6px;
-    width: 3px;
-    border-radius: 2px;
-    background: var(--blue-2);
-}
-
-.links { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
-.links a {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.04);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--white);
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.links a:hover {
-    background: rgba(120, 160, 255, 0.15);
-    color: var(--cyan);
-    transform: translateY(-2px);
-}
-
-.hint {
-    position: absolute;
-    top: calc(var(--orbit-radius) - 60px); 
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--muted);
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0.8;
-    animation: hintPulse 2s infinite ease-in-out;
-    z-index: 20;
-}
-
-@keyframes hintPulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.9; }
-}
-
-.footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    text-align: center;
-    color: #68738c;
-    font-size: 11px;
-    border-top: 1px solid var(--line);
-    background: rgba(2, 4, 11, 0.9);
-    z-index: 10;
-}
+.footer { text-align: center; padding: 34px 0 50px; color: var(--muted); font-size: 13px; font-weight: 600; }
 
 #toast {
-    position: fixed;
-    left: 50%;
-    bottom: 50px;
-    transform: translate(-50%, 20px);
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: rgba(8, 12, 28, 0.95);
-    border: 1px solid var(--line);
-    color: var(--white);
-    font-size: 12px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 99;
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+  padding: 12px 24px; border-radius: 100px; font-size: 13.5px; font-weight: 700;
+  background: var(--ink); color: var(--bg);
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+  opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+  z-index: 999;
 }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: .95;
-    background-image:
-        radial-gradient(circle at 5% 10%, rgba(255,255,255,1) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 15% 45%, rgba(150,210,255,.9) 0 1.5px, transparent 2px),
-        radial-gradient(circle at 25% 85%, rgba(255,255,255,.95) 0 1px, transparent 2px),
-        radial-gradient(circle at 35% 25%, rgba(190,170,255,.9) 0 1.4px, transparent 2px),
-        radial-gradient(circle at 45% 65%, rgba(255,255,255,1) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 55% 15%, rgba(130,205,255,.9) 0 1.5px, transparent 2px),
-        radial-gradient(circle at 65% 90%, rgba(255,255,255,.95) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 75% 35%, rgba(190,170,255,.9) 0 1.4px, transparent 2px),
-        radial-gradient(circle at 85% 70%, rgba(255,255,255,1) 0 1.5px, transparent 2px),
-        radial-gradient(circle at 95% 20%, rgba(150,210,255,.9) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 10% 80%, rgba(255,255,255,.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 90% 50%, rgba(255,255,255,.85) 0 1.2px, transparent 2px);
-    background-size: 120px 130px, 160px 150px, 190px 180px, 220px 210px, 140px 160px, 200px 190px, 170px 180px, 240px 230px, 150px 140px, 210px 200px, 130px 140px, 180px 170px;
-    z-index: -1;
+/* Back to top button */
+#back-to-top {
+  position: fixed; right: 20px; bottom: 20px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--violet); color: white; border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(108,77,246,0.3);
+  opacity: 0; visibility: hidden; transform: translateY(20px);
+  transition: all 0.3s ease; z-index: 90;
 }
+#back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+#back-to-top:hover { transform: translateY(-5px); box-shadow: 0 6px 16px rgba(108,77,246,0.5); }
 
-.shooting-stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 0;
-}
-
-.shooting-star {
-    position: absolute;
-    width: var(--max-len, 180px);
-    height: 3px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent 0%, rgba(80, 160, 255, 0.4) 15%, rgba(120, 210, 255, 0.85) 50%, rgba(255, 255, 255, 1) 100%);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(90, 180, 255, 0.9), 0 0 35px rgba(60, 130, 255, 0.6);
-    transform-origin: right center;
-    opacity: 0;
-    will-change: transform, opacity, clip-path;
-    animation: meteorFly var(--duration, 2s) cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
-}
-
-@keyframes meteorFly {
-    0% { clip-path: inset(0 0 0 100%); transform: translate(0, 0) rotate(var(--angle)); opacity: 0; }
-    25% { clip-path: inset(0 0 0 0%); opacity: 1; }
-    55% { clip-path: inset(0 0 0 0%); transform: translate(var(--tx), var(--ty)) rotate(var(--angle)); opacity: 1; }
-    100% { clip-path: inset(0 0 0 100%); transform: translate(var(--tx), var(--ty)) rotate(var(--angle)); opacity: 0; }
-}
-
-@media (max-width: 600px) {
-    :root { --orbit-radius: 170px; }
-    .sun { width: 150px; height: 150px; }
-    .planet-node { width: 36px; height: 36px; margin-top: -18px; margin-left: -18px; }
-    .planet-body { font-size: 14px; }
-    
-    .circle-card { 
-        width: 280px; 
-        padding: 14px; 
-        top: -210px; 
-        left: 50%; 
-        transform: translateX(-50%) scale(0.55); 
-        transform-origin: center bottom; 
-    }
-    .circle-card.is-rendered { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-    
-    .box-content h2 { font-size: 14px; }
-    .box-content p { font-size: 11.5px; }
-    .achievement li { font-size: 11px; padding: 6px 8px 6px 14px; }
-    .box-icon { font-size: 24px; margin-bottom: 4px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .planet-pointer { animation: none; }
+a:focus-visible, button:focus-visible, .contact-btn:focus-visible {
+  outline: 2.5px solid var(--violet); outline-offset: 3px;
 }
 </style>
 </head>
-
 <body>
-<div class="shooting-stars" aria-hidden="true"></div>
 
-<section class="profile">
-    <h1 id="typing-title"></h1>
-    <h3>Student • Competitive Programmer • Web Developer</h3>
-</section>
-
-<section class="content-section" id="content-section">
-    <div class="solar-system" id="solarSystem">
-        <div class="sun"></div>
-
-        <span class="hint" id="scrollHint"></span>
-
-        <div class="orbit-rotator" id="orbitRotator">
-            <div class="planet-node" data-index="0" style="--planet-color: linear-gradient(135deg, #70a1ff, #3742fa); --planet-glow: rgba(112, 161, 255, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-user-graduate"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-user-graduate"></i></div>
-                    <div class="box-content">
-                        <h2>Thông Tin Cá Nhân</h2>
-                        <p><b>Họ tên:</b> Trần Đặng Phước Vinh</p>
-                        <p><b>Ngày sinh:</b> 18/11/2009</p>
-                        <p><b>Trường:</b> THPT U Minh</p>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="1" style="--planet-color: linear-gradient(135deg, #7bed9f, #2ed573); --planet-glow: rgba(123, 237, 159, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-code"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-code"></i></div>
-                    <div class="box-content">
-                        <h2>Kỹ Năng</h2>
-                        <ul class="achievement">
-                            <li>C++ / C / Pascal</li>
-                            <li>STL / Data Structures</li>
-                            <li>Dynamic Programming / Graph Algorithms</li>
-                            <li>HTML / CSS / JavaScript</li>
-                            <li>Git & GitHub / Python</li>
-                        </ul>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="2" style="--planet-color: linear-gradient(135deg, #a8c0ff, #3f2b96); --planet-glow: rgba(168, 192, 255, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-laptop-code"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-laptop-code"></i></div>
-                    <div class="box-content">
-                        <h2>Competitive Programming</h2>
-                        <ul class="achievement">
-                            <li><a href="https://oj.eiu.edu.vn/user/Vinh" target="_blank" rel="noopener noreferrer">EIUOJ ↗</a></li>
-                            <li><a href="https://lqdoj.edu.vn/user/dangcapvutru" target="_blank" rel="noopener noreferrer">LQDOJ ↗</a></li>
-                            <li><a href="https://oj.vnoi.info/user/dangcapvutru" target="_blank" rel="noopener noreferrer">VNOI ↗</a></li>
-                        </ul>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="3" style="--planet-color: linear-gradient(135deg, #74b9ff, #0984e3); --planet-glow: rgba(116, 185, 255, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-award"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-award"></i></div>
-                    <div class="box-content">
-                        <h2>Thành Tựu - Lớp 8</h2>
-                        <ul class="achievement">
-                            <li>🥉 Giải ba Tin học trẻ vòng huyện</li>
-                            <li>🥉 Giải ba Tin học trẻ vòng tỉnh</li>
-                        </ul>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="4" style="--planet-color: linear-gradient(135deg, #81ecec, #00cec9); --planet-glow: rgba(129, 236, 236, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-award"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-award"></i></div>
-                    <div class="box-content">
-                        <h2>Thành Tựu - Lớp 9</h2>
-                        <ul class="achievement">
-                            <li>🥉 Giải ba Casio vòng huyện</li>
-                            <li>🏅 Giải khuyến khích Casio vòng tỉnh</li>
-                            <li>🥉 Giải ba HSG Tin học vòng huyện</li>
-                            <li>🥈 Giải nhì HSG Tin học vòng tỉnh</li>
-                            <li>🥉 Giải ba Tin học trẻ vòng huyện</li>
-                            <li>🥉 Giải ba Tin học trẻ vòng tỉnh</li>
-                        </ul>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="5" style="--planet-color: linear-gradient(135deg, #ffeaa7, #fdcb6e); --planet-glow: rgba(255, 234, 167, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-award"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-award"></i></div>
-                    <div class="box-content">
-                        <h2>Thành Tựu - Lớp 10</h2>
-                        <ul class="achievement">
-                            <li>🥉 Giải ba HSG Tin học tỉnh</li>
-                            <li>🥉 HCĐ Olympic Truyền Thống 30/4 Tin học XXIX</li>
-                            <li>🏅 Giải khuyến khích Tin học trẻ tỉnh</li>
-                        </ul>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="6" style="--planet-color: linear-gradient(135deg, #a29bfe, #6c5ce7); --planet-glow: rgba(162, 155, 254, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-award"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-award"></i></div>
-                    <div class="box-content">
-                        <h2>Thành Tựu - Lớp 11</h2>
-                        <ul class="achievement">
-                            <li>🥉 Giải ba HSG Tin học tỉnh</li>
-                            <li>🏅 Đội tuyển HSG Quốc gia Tin học Cà Mau</li>
-                        </ul>
-                    </div>
-                </article>
-            </div>
-
-            <div class="planet-node" data-index="7" style="--planet-color: linear-gradient(135deg, #eccc68, #ffa502); --planet-glow: rgba(236, 204, 104, 0.4);">
-                <div class="planet-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                <div class="planet-body"><i class="fa-solid fa-address-card"></i></div>
-                <article class="circle-card">
-                    <div class="box-icon"><i class="fa-solid fa-address-card"></i></div>
-                    <div class="box-content">
-                        <h2>Thông Tin Liên Hệ</h2>
-                        <p><i class="fa-solid fa-envelope"></i> <b>Email:</b><br>
-                            <a href="#" onclick="copyText('vinhtrandangphuoc@gmail.com'); return false;">vinhtrandangphuoc@gmail.com</a>
-                        </p>
-                        <p><i class="fa-solid fa-phone"></i> <b>Điện thoại:</b><br>
-                            <a href="#" onclick="copyText('0919951334'); return false;">0919951334</a>
-                        </p>
-                        <div class="links">
-                            <a href="https://facebook.com/anhlavinhdepzai" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook"></i></a>
-                            <a href="https://github.com/vomunes" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
-                            <a href="https://www.tiktok.com/@trandangphuocvinh" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
-                            <a href="https://locket.cam/ph.vinh" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-heart"></i></a>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </div>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="brand"><span class="dot"></span>Phước Vinh</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#about">Giới thiệu</a>
+        <a href="#skills">Kỹ năng</a>
+        <a href="#cp">Judges</a>
+        <a href="#achievements">Thành tích</a>
+      </div>
+      <button id="theme-toggle" aria-label="Đổi giao diện"><i class="fa-solid fa-moon" aria-hidden="true"></i></button>
+      <a class="nav-cta" href="#contact">Liên hệ</a>
     </div>
-</section>
+  </div>
+</nav>
 
-<footer class="footer">
-    <p>Designed by <b>Trần Đặng Phước Vinh</b></p>
-</footer>
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="avatar-wrap">
+        <div class="avatar-photo">
+          <!-- Chú ý: Đảm bảo có file avatar.jpg cùng thư mục, hoặc sửa lại đường dẫn -->
+          <img src="avatar.jpg" alt="Chân dung Trần Đặng Phước Vinh" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="avatar-fallback" style="display:none;">TĐPV</span>
+        </div>
+      </div>
+      <div class="hero-content">
+        <h1>Trần Đặng Phước Vinh</h1>
+        <div class="chip-row">
+          <span class="chip c-violet">🎓 Student</span>
+          <span class="chip c-coral">🏆 Competitive Programmer</span>
+          <span class="chip c-mint">💻 Web Developer</span>
+        </div>
+        <p class="tagline">Học sinh THPT U Minh, Cà Mau — mê giải thuật, thích code web, và luôn tìm cách chinh phục thử thách mới mỗi ngày.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#contact"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Liên hệ ngay</a>
+          <a class="btn btn-ghost" href="https://github.com/vomunes" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- story highlights -->
+  
+
+  <!-- stats -->
+  <section aria-label="Số liệu nổi bật">
+    <div class="bento reveal">
+      <div class="card stat-card bg-violet"><span class="stat-num">4</span><span class="stat-label">năm thi đấu Tin học</span></div>
+      <div class="card stat-card bg-coral"><span class="stat-num">13</span><span class="stat-label">giải thưởng &amp; huy chương</span></div>
+      <div class="card stat-card bg-mint"><span class="stat-num">3</span><span class="stat-label">online judge đang luyện tập</span></div>
+      <div class="card stat-card bg-sun"><span class="stat-num">1</span><span class="stat-label">suất Đội tuyển HSGQG</span></div>
+    </div>
+  </section>
+
+  <!-- about + skills -->
+  <section id="about">
+    <div class="bento">
+      <div class="card about-card span-2 reveal">
+        <h3>👋 Giới thiệu</h3>
+        <div class="field-list">
+          <div class="field-row"><span class="k">Họ tên</span><span class="v">Trần Đặng Phước Vinh</span></div>
+          <div class="field-row"><span class="k">Ngày sinh</span><span class="v">18/11/2009</span></div>
+          <div class="field-row"><span class="k">Trường</span><span class="v">THPT U Minh</span></div>
+          <div class="field-row"><span class="k">Vai trò</span><span class="v">Student · CP · Web Dev</span></div>
+        </div>
+      </div>
+
+      <div class="card span-2 reveal" id="skills">
+        <h3 style="font-family:var(--display); font-size:17px; margin-bottom:12px;">🛠️ Kỹ năng</h3>
+        <div class="skill-group">
+          <div class="skill-group-label">Ngôn ngữ</div>
+          <div class="pill-row">
+            <span class="pill">C++</span><span class="pill">C</span><span class="pill">Pascal</span><span class="pill">Python</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">Giải thuật</div>
+          <div class="pill-row">
+            <span class="pill">STL</span><span class="pill">Dynamic Programming</span><span class="pill">Graph Algorithms</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">Web &amp; Công cụ</div>
+          <div class="pill-row">
+            <span class="pill">HTML</span><span class="pill">CSS</span><span class="pill">JavaScript</span><span class="pill">Git</span><span class="pill">GitHub</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CP profiles -->
+  <section id="cp">
+    <div class="section-head reveal">
+      <span class="eyebrow">Luyện thuật toán</span>
+      <h2>Hồ sơ trên các Online Judge</h2>
+    </div>
+    <div class="bento">
+      <a class="card link-card reveal" href="https://oj.eiu.edu.vn/user/Vinh" target="_blank" rel="noopener noreferrer">
+        <span class="link-avatar bg-violet"><i class="fa-solid fa-code" aria-hidden="true"></i></span>
+        <span>
+          <span class="link-title">EIUOJ</span><br>
+          <span class="link-sub">handle: Vinh</span>
+        </span>
+        <span class="link-arrow"><i class="fa-solid fa-arrow-up-right" aria-hidden="true"></i></span>
+      </a>
+      <a class="card link-card reveal" href="https://lqdoj.edu.vn/user/dangcapvutru" target="_blank" rel="noopener noreferrer">
+        <span class="link-avatar bg-coral"><i class="fa-solid fa-medal" aria-hidden="true"></i></span>
+        <span>
+          <span class="link-title">LQDOJ</span><br>
+          <span class="link-sub">handle: dangcapvutru</span>
+        </span>
+        <span class="link-arrow"><i class="fa-solid fa-arrow-up-right" aria-hidden="true"></i></span>
+      </a>
+      <a class="card link-card reveal" href="https://oj.vnoi.info/user/dangcapvutru" target="_blank" rel="noopener noreferrer">
+        <span class="link-avatar bg-mint"><i class="fa-solid fa-trophy" aria-hidden="true"></i></span>
+        <span>
+          <span class="link-title">VNOI</span><br>
+          <span class="link-sub">handle: dangcapvutru</span>
+        </span>
+        <span class="link-arrow"><i class="fa-solid fa-arrow-up-right" aria-hidden="true"></i></span>
+      </a>
+    </div>
+  </section>
+  <div class="stories" role="tablist" aria-label="Thành tích theo từng năm học">
+    <button class="story" data-year="8" role="tab" aria-selected="false">
+      <span class="story-ring"><span class="story-inner">L8</span></span>
+      <span class="story-label">Lớp 8</span>
+    </button>
+    <button class="story" data-year="9" role="tab" aria-selected="false">
+      <span class="story-ring"><span class="story-inner">L9</span></span>
+      <span class="story-label">Lớp 9</span>
+    </button>
+    <button class="story" data-year="10" role="tab" aria-selected="false">
+      <span class="story-ring"><span class="story-inner">L10</span></span>
+      <span class="story-label">Lớp 10</span>
+    </button>
+    <button class="story" data-year="11" role="tab" aria-selected="false">
+      <span class="story-ring"><span class="story-inner">L11</span></span>
+      <span class="story-label">Lớp 11</span>
+    </button>
+  </div>  
+  <!-- achievements -->
+  <section id="achievements">
+    <div class="section-head reveal">
+      <span class="eyebrow">Hành trình</span>
+      <h2>Thành tích qua từng năm</h2>
+    </div>
+
+    <div class="card achv-card reveal">
+      <div class="year-panel is-active" data-panel="11">
+        <div class="achv-head"><h3>Lớp 11</h3><span>2 thành tích</span></div>
+        <div class="achv-list">
+          <div class="achv-item"><span class="achv-emoji">🏅</span><span class="achv-text">Đội tuyển HSG Quốc gia Tin học Cà Mau</span><span class="achv-tag tag-gold">Đội tuyển</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba HSG Tin học tỉnh</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+        </div>
+      </div>
+      <div class="year-panel" data-panel="10">
+        <div class="achv-head"><h3>Lớp 10</h3><span>3 thành tích</span></div>
+        <div class="achv-list">
+          <div class="achv-item"><span class="achv-emoji">🏅</span><span class="achv-text">Giải khuyến khích Tin học trẻ tỉnh</span><span class="achv-tag tag-kk">KK</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">HCĐ Olympic Truyền Thống 30/4 Tin học XXIX</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba HSG Tin học tỉnh</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+        </div>
+      </div>
+      <div class="year-panel" data-panel="9">
+        <div class="achv-head"><h3>Lớp 9</h3><span>6 thành tích</span></div>
+        <div class="achv-list">
+          <div class="achv-item"><span class="achv-emoji">🥈</span><span class="achv-text">Giải nhì HSG Tin học vòng tỉnh</span><span class="achv-tag tag-silver">Giải 2</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba Tin học trẻ vòng tỉnh</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba Tin học trẻ vòng huyện</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba HSG Tin học vòng huyện</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+          <div class="achv-item"><span class="achv-emoji">🏅</span><span class="achv-text">Giải khuyến khích Casio vòng tỉnh</span><span class="achv-tag tag-kk">KK</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba Casio vòng huyện</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+        </div>
+      </div>
+      <div class="year-panel" data-panel="8">
+        <div class="achv-head"><h3>Lớp 8</h3><span>2 thành tích</span></div>
+        <div class="achv-list">
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba Tin học trẻ vòng tỉnh</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+          <div class="achv-item"><span class="achv-emoji">🥉</span><span class="achv-text">Giải ba Tin học trẻ vòng huyện</span><span class="achv-tag tag-bronze">Giải 3</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- contact -->
+  <section id="contact">
+    <div class="section-head reveal">
+      <span class="eyebrow">Kết nối</span>
+      <h2>Liên hệ với mình</h2>
+    </div>
+    <div class="contact-list reveal">
+      <button class="contact-btn copyable" data-copy="vinhtrandangphuoc@gmail.com">
+        <span class="ic bg-violet" style="background:var(--violet);"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+        <span>Email<small>vinhtrandangphuoc@gmail.com</small></span>
+        <span class="copy-hint">Nhấn để sao chép</span>
+      </button>
+      <button class="contact-btn copyable" data-copy="0919951334">
+        <span class="ic" style="background:var(--coral);"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
+        <span>Điện thoại<small>0919951334</small></span>
+        <span class="copy-hint">Nhấn để sao chép</span>
+      </button>
+      <a class="contact-btn" href="https://facebook.com/anhlavinhdepzai" target="_blank" rel="noopener noreferrer">
+        <span class="ic" style="background:#4267B2;"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></span>
+        <span>Facebook<small>anhlavinhdepzai</small></span>
+      </a>
+      <a class="contact-btn" href="https://github.com/vomunes" target="_blank" rel="noopener noreferrer">
+        <span class="ic" style="background:#181717;"><i class="fa-brands fa-github" aria-hidden="true"></i></span>
+        <span>GitHub<small>vomunes</small></span>
+      </a>
+      <a class="contact-btn" href="https://www.tiktok.com/@trandangphuocvinh" target="_blank" rel="noopener noreferrer">
+        <span class="ic" style="background:#010101;"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></span>
+        <span>TikTok<small>@trandangphuocvinh</small></span>
+      </a>
+      <a class="contact-btn" href="https://locket.cam/ph.vinh" target="_blank" rel="noopener noreferrer">
+        <span class="ic" style="background:var(--mint);"><i class="fa-solid fa-heart" aria-hidden="true"></i></span>
+        <span>Locket<small>ph.vinh</small></span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Made with 💜 by Trần Đặng Phước Vinh</p>
+  </footer>
+
+</div>
 
 <div id="toast"></div>
 
+<!-- Nút Back to top -->
+<button id="back-to-top" aria-label="Cuộn lên đầu trang"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+
 <script>
-const titleText = "Trần Đặng Phước Vinh";
-const typingElement = document.getElementById("typing-title");
-let typingIndex = 0;
+/* Theme Toggle Logic */
+const themeToggle = document.getElementById('theme-toggle');
+const htmlEl = document.documentElement;
+const iconTheme = themeToggle.querySelector('i');
 
-function typeTitle() {
-    if (typingIndex < titleText.length) {
-        typingElement.textContent += titleText.charAt(typingIndex);
-        typingIndex++;
-        setTimeout(typeTitle, 100);
-    } else {
-        typingElement.style.borderRight = "none";
-    }
-}
-window.addEventListener("load", () => setTimeout(typeTitle, 200));
-
-const planets = [...document.querySelectorAll(".planet-node")];
-const solarSystem = document.getElementById("solarSystem");
-const sunEl = document.querySelector(".sun");
-const scrollHint = document.getElementById("scrollHint");
-const totalPlanets = planets.length;
-
-let current = -1;
-let isAnimating = false;
-let currentTimeline = null;
-
-function getRadius() {
-    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius')) || 260;
+// Check local storage for saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  htmlEl.setAttribute('data-theme', savedTheme);
+  updateThemeIcon(savedTheme);
+} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  // Check OS preference
+  htmlEl.setAttribute('data-theme', 'dark');
+  updateThemeIcon('dark');
 }
 
-function initPlanets() {
-    planets.forEach(planet => {
-        gsap.set(planet, { x: 0, y: 0, scale: 0, opacity: 0, visibility: "hidden", force3D: true });
-        planet.style.pointerEvents = "none";
-        const card = planet.querySelector(".circle-card");
-        if (card) gsap.set(card, { scale: 0.5, opacity: 0, visibility: "hidden" });
-    });
-}
-
-function hideCard(planet, fast) {
-    const card = planet.querySelector(".circle-card");
-    if (!card) return;
-    gsap.killTweensOf(card);
-    card.classList.remove('is-rendered');
-    gsap.to(card, { scale: 0.5, opacity: 0, visibility: "hidden", duration: fast ? 0.2 : 0.3, ease: "power2.in" });
-}
-
-function showCard(planet) {
-    const card = planet.querySelector(".circle-card");
-    if (!card) return;
-    gsap.killTweensOf(card);
-    card.style.visibility = "visible";
-    gsap.fromTo(card,
-        { scale: 0.4, opacity: 0 },
-        {
-            scale: 1,
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.567,
-            ease: "back.out(1.4)",
-            delay: 0.05,
-            onComplete: () => {
-                card.classList.add('is-rendered');
-                const achList = card.querySelector('.achievement');
-                if (achList) achList.scrollTop = 0;
-            }
-        }
-    );
-}
-
-function burstSun(velocity) {
-    const dir = velocity >= 0 ? 1 : -1;
-    gsap.killTweensOf(sunEl);
-    gsap.to(sunEl, {
-        rotation: 25 * dir, 
-        scale: 1.05,
-        duration: 0.3,
-        ease: "power2.out"
-    });
-    gsap.to(sunEl, {
-        rotation: 0,
-        scale: 1,
-        duration: 0.6,
-        delay: 0.1,
-        ease: "elastic.out(1, 0.5)"
-    });
-}
-
-function transitionTo(newIndex, velocity) {
-    if (isAnimating) {
-        if (currentTimeline) currentTimeline.kill();
-        isAnimating = false;
-    }
-    isAnimating = true;
-
-    if (scrollHint) gsap.to(scrollHint, { opacity: 0, duration: 0.3 });
-
-    const radius = getRadius();
-    const isMobile = window.matchMedia("(max-width: 600px)").matches;
-    const angle = isMobile ? (90 * (Math.PI / 180)) : (-90 * (Math.PI / 180));
-    
-    const tx = Math.cos(angle) * radius;
-    const ty = Math.sin(angle) * radius;
-
-    burstSun(velocity);
-
-    const prevPlanet = current >= 0 ? planets[current] : null;
-    const nextPlanet = newIndex >= 0 ? planets[newIndex] : null;
-
-    const animDuration = 0.789;
-
-    currentTimeline = gsap.timeline({
-        onComplete: () => { 
-            isAnimating = false; 
-            currentTimeline = null;
-        }
-    });
-
-    if (prevPlanet && prevPlanet !== nextPlanet) {
-        prevPlanet.classList.remove('is-active');
-        gsap.killTweensOf(prevPlanet);
-        hideCard(prevPlanet, true);
-        currentTimeline.to(prevPlanet, {
-            x: 0, y: 0, scale: 0, opacity: 0, visibility: "hidden",
-            duration: animDuration,
-            ease: "power2.inOut",
-            onComplete: () => { prevPlanet.style.pointerEvents = "none"; }
-        }, 0); 
-    }
-
-    if (nextPlanet) {
-        nextPlanet.style.pointerEvents = "auto";
-        gsap.killTweensOf(nextPlanet);
-        currentTimeline.fromTo(nextPlanet,
-            { x: 0, y: 0, scale: 0, opacity: 0, visibility: "visible" },
-            {
-                x: tx, y: ty, scale: 1, opacity: 1, visibility: "visible",
-                duration: animDuration,
-                ease: "power2.out",
-                onStart: () => { nextPlanet.classList.add('is-active'); },
-                onComplete: () => { showCard(nextPlanet); }
-            },
-            0
-        );
-    }
-
-    current = newIndex;
-}
-
-function move(step, velocity = step) {
-    let nextIndex;
-    if (current === -1) {
-        nextIndex = step > 0 ? 0 : totalPlanets - 1;
-    } else {
-        nextIndex = current + step;
-        if (nextIndex >= totalPlanets) nextIndex = 0;
-        else if (nextIndex < 0) nextIndex = totalPlanets - 1;
-    }
-    transitionTo(nextIndex, velocity);
-}
-
-let wheelCooldown = false;
-window.addEventListener("wheel", event => {
-    if (event.target.closest('.achievement')) return;
-    if (wheelCooldown) return;
-
-    wheelCooldown = true;
-    setTimeout(() => { wheelCooldown = false; }, 300);
-
-    const direction = event.deltaY > 0 ? 1 : -1;
-    move(direction, direction);
-}, { passive: true });
-
-let touchStartX = 0, touchStartY = 0;
-const contentSection = document.getElementById("content-section");
-
-contentSection.addEventListener("touchstart", e => {
-    if (e.target.closest('.achievement')) return;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-}, { passive: true });
-
-contentSection.addEventListener("touchend", e => {
-    if (e.target.closest('.achievement')) return;
-    const diffX = touchStartX - e.changedTouches[0].clientX;
-    const diffY = touchStartY - e.changedTouches[0].clientY;
-    const distance = Math.hypot(diffX, diffY);
-
-    if (distance > 30) {
-        const mainDiff = Math.abs(diffX) > Math.abs(diffY) ? diffX : diffY;
-        const direction = mainDiff > 0 ? 1 : -1;
-        move(direction, direction);
-    }
-}, { passive: true });
-
-window.addEventListener("keydown", event => {
-    if (["ArrowRight", "ArrowDown"].includes(event.key)) move(1, 1);
-    if (["ArrowLeft", "ArrowUp"].includes(event.key)) move(-1, -1);
+themeToggle.addEventListener('click', () => {
+  const currentTheme = htmlEl.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  htmlEl.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeIcon(newTheme);
 });
 
-function createShootingStar() {
-    const container = document.querySelector(".shooting-stars");
-    if (!container) return;
-    const star = document.createElement("span");
-    star.className = "shooting-star";
-    const startX = Math.random() * 100;
-    const startY = Math.random() * 100;
-    const angleRad = Math.random() * Math.PI * 2;
-    const angleDeg = angleRad * (180 / Math.PI);
-    const distance = 160 + Math.random() * 240;
-    star.style.left = `${startX}vw`;
-    star.style.top = `${startY}vh`;
-    star.style.setProperty("--angle", `${angleDeg}deg`);
-    star.style.setProperty("--tx", `${Math.cos(angleRad) * distance}px`);
-    star.style.setProperty("--ty", `${Math.sin(angleRad) * distance}px`);
-    star.style.setProperty("--max-len", `${140 + Math.random() * 100}px`);
-    star.style.setProperty("--duration", `${1.2 + Math.random() * 0.8}s`);
-    container.appendChild(star);
-    setTimeout(() => star.remove(), 2000);
+function updateThemeIcon(theme) {
+  if (theme === 'dark') {
+    iconTheme.className = 'fa-solid fa-sun';
+  } else {
+    iconTheme.className = 'fa-solid fa-moon';
+  }
 }
 
-const isSmallScreen = window.matchMedia("(max-width: 600px)").matches;
-let activeStars = 0;
-const maxConcurrentStars = isSmallScreen ? 2 : 4;
+/* story highlights -> switch achievement year panel */
+const storyBtns = document.querySelectorAll('.story');
+const panels = document.querySelectorAll('.year-panel');
 
-function randomShootingStar() {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && activeStars < maxConcurrentStars) {
-        activeStars++;
-        createShootingStar();
-        setTimeout(() => { activeStars--; }, 2000);
-    }
-    const gap = isSmallScreen ? 2000 + Math.random() * 1000 : 1500 + Math.random() * 800;
-    setTimeout(randomShootingStar, gap);
+function setActiveYear(year, scrollTo){
+  panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === year));
+  storyBtns.forEach(b => {
+    const active = b.dataset.year === year;
+    b.classList.toggle('is-active', active);
+    b.setAttribute('aria-selected', active);
+  });
+  if(scrollTo){
+    document.getElementById('achievements').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
 }
-randomShootingStar();
+storyBtns.forEach(b => b.addEventListener('click', () => setActiveYear(b.dataset.year, true)));
+setActiveYear('11', false);
 
-function copyText(text) {
-    navigator.clipboard.writeText(text);
-    const toast = document.getElementById("toast");
-    toast.textContent = "Đã sao chép: " + text;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2000);
+/* scroll reveal */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const revealEls = document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window && !reduceMotion){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
+    });
+  }, { threshold:0.1, rootMargin:'0px 0px -50px 0px' }); // Điều chỉnh rootMargin để reveal tự nhiên hơn
+  revealEls.forEach(el => io.observe(el));
+} else {
+  revealEls.forEach(el => el.classList.add('is-visible'));
 }
 
-document.fonts.ready.then(() => {
-    initPlanets();
+/* copy to clipboard */
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+document.querySelectorAll('.copyable').forEach(el => {
+  el.addEventListener('click', () => {
+    const val = el.getAttribute('data-copy');
+    navigator.clipboard.writeText(val).then(() => showToast('Đã sao chép: ' + val));
+  });
 });
 
-let resizeTimer;
-window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        if (current >= 0) {
-            const radius = getRadius();
-            const isMobile = window.matchMedia("(max-width: 600px)").matches;
-            const angle = isMobile ? (90 * (Math.PI / 180)) : (-90 * (Math.PI / 180));
-            gsap.set(planets[current], { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
-        }
-    }, 150);
+/* Back to Top button logic */
+const backToTopBtn = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 400) {
+    backToTopBtn.classList.add('show');
+  } else {
+    backToTopBtn.classList.remove('show');
+  }
 });
-
-window.addEventListener("load", () => {
-    initPlanets();
+backToTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 </script>
 </body>
