@@ -141,12 +141,21 @@ mm.add("(prefers-reduced-motion: no-preference)", () => {
     onEnter: els => gsap.to(els, { opacity: 1, y: 0, duration: 0.9, stagger: 0.12, ease: "power2.out", overwrite: true }) });
 
   // Cuộn ngang
+  // 1) CUỘN NGANG (pin) — phải tạo đầu tiên
   const track = $("#track"), dist = () => track.scrollWidth - innerWidth;
   const hs = gsap.to(track, { x: () => -dist(), ease: "none",
-    scrollTrigger: { trigger: "#mile", start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
+    scrollTrigger: { trigger: "#mile", start: "top top", end: () => "+=" + dist(),
+      pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
+      refreshPriority: 1,                       // <-- thêm dòng này
       onUpdate: self => gsap.set("#hfill", { scaleX: self.progress }) } });
   $$(".panel").forEach(p => gsap.from(p.children, { opacity: 0, y: 40, duration: 0.9, stagger: 0.1, ease: "power2.out",
     scrollTrigger: { trigger: p, containerAnimation: hs, start: "left 88%", once: true } }));
+
+  // 2) Ticker vẽ blob
+  gsap.ticker.add(t => { if (dirty || t - lastDraw > 0.045) { draw(t); dirty = false; lastDraw = t; } });
+
+  // 3) Các chặng morph — tạo SAU pin
+  STAGE.forEach((sel, k) => { /* giữ nguyên như cũ */ });
 
   // Gõ code
   const typed = { n: 0 }; let shown = -1;
