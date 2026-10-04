@@ -9,11 +9,39 @@
 <title>Khi Tuổi Trẻ Còn Đang Viết — Trần Đặng Phước Vinh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<noscript><style>.hero-in *,.rv,.w>span,.panel>*,.heart{opacity:1!important;transform:none!important}</style></noscript>
+<script>
+if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
+  document.documentElement.classList.add("ld");
+  setTimeout(()=>document.documentElement.classList.remove("ld"),12000);
+}
+</script>
 </head>
 <body>
+  <div class="loader" id="loader" aria-hidden="true">
+  <div class="ld-name"><span class="m"><span>Trần <em>Vinh</em></span></span></div>
+  <div class="ld-black"></div>
+
+  <svg class="ld-char" viewBox="0 0 110 140">
+    <ellipse cx="58" cy="131" rx="26" ry="3.5" fill="#1d4568" opacity=".15"/>
+    <g class="bob">
+      <g class="leg b"><g class="th"><path d="M60 84V104"/><g class="sn"><path d="M60 104V124l9 1"/></g></g></g>
+      <g class="leg"><g class="th"><path d="M60 84V104"/><g class="sn"><path d="M60 104V124l9 1"/></g></g></g>
+      <g class="up" transform="rotate(14 60 84)">
+        <rect x="39" y="48" width="16" height="27" rx="5" fill="#2b5b86"/>
+        <path class="tr" d="M60 84V48"/>
+        <g class="scarf"><path class="sc" d="M60 47q-10-3-23 5"/></g>
+        <g class="arm b"><path d="M58 54l14 10 20-2"/></g>
+        <g class="arm"><path d="M60 52l16 8 18-4"/></g>
+        <circle cx="62" cy="32" r="12" fill="#f8f9f6"/>
+        <path class="f" d="M50 31C50 20 58 17 66 19C72 21 74 26 73 29C66 24 58 25 50 31Z"/>
+        <circle class="f" cx="69" cy="33" r="1.8"/>
+        <circle class="ck" cx="68" cy="39" r="3"/>
+      </g>
+    </g>
+  </svg>
+</div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
@@ -23,172 +51,171 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
 </svg>
 
-<!-- Khối màu morph chạy nền -->
-<div class="blob" id="blob">
-  <svg viewBox="-220 -220 440 440" aria-hidden="true"><path id="ring"/><path id="shape"/></svg>
-</div>
+<header class="top">
+  <span class="brand"><b>TV</b><span>Phước Vinh</span></span>
+  <span class="label" id="label">Mở đầu</span>
+  <i class="bar" id="bar"></i>
+</header>
 
+<div class="rings" aria-hidden="true"><svg viewBox="-200 -200 400 400"><g fill="none" stroke="currentColor" stroke-width=".8"><circle r="26"/><circle cx="3" r="48"/><circle cx="6" r="72"/><circle cx="9" r="96" stroke-dasharray="2 5"/><circle cx="12" r="120"/><circle cx="14" r="144"/><circle cx="16" r="168" stroke-dasharray="1 6"/><circle cx="18" r="192"/></g></svg></div>
+<div class="dust" aria-hidden="true"><div class="d1"></div><div class="d2"></div><div class="d3"></div></div>
+<i class="orb o1" aria-hidden="true"></i><i class="orb o2" aria-hidden="true"></i><i class="orb o3" aria-hidden="true"></i>
 
+<main id="world">
+  <div class="track" id="track">
+    <svg class="ink" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+      <path id="ink" pathLength="1" vector-effect="non-scaling-stroke" d="M0 84 C60 68 110 98 170 82 S280 66 340 84 S450 98 520 80 S640 64 700 84 S820 98 880 82 S960 72 1000 80"/>
+    </svg>
 
-<main>
+    <!-- 1. Mở đầu -->
+    <section class="p hero" data-label="Mở đầu">
+      <p class="kick hi">Portfolio cá nhân · 2026</p>
+      <h1 id="h1">Khi Tuổi Trẻ<br><em>Còn Đang Viết</em></h1>
+      <p class="sub hi">Một hành trình của những ngày tháng đang lớn lên.</p>
+      <p class="by hi">Trần Đặng Phước Vinh</p>
+      <p class="cue hi"><i></i>Cuộn xuống, trang sẽ lật sang phải</p>
+    </section>
 
-  <!-- HERO -->
-  <section class="hero" id="hero" data-label="Mở đầu">
-    <div class="hero-in">
-      <p class="kick">Portfolio cá nhân · 2026</p>
-      <h1 id="h1">Khi Tuổi Trẻ <em>       Còn Đang Viết</em></h1>
-      <p class="sub">Một hành trình của những ngày tháng đang lớn lên.</p>
-      <p class="by">Trần Đặng Phước Vinh</p>
-    </div>
-  </section>
+    <!-- 2. Lời mở -->
+    <section class="p wide" data-label="Lời mở">
+      <h2 class="rv">Có những câu chuyện chỉ bắt đầu khi ta dám bước đi.</h2>
+      <p class="rv">Tuổi trẻ không phải là quãng thời gian ta biết tất cả. Đó là lúc ta bắt đầu đặt câu hỏi, thử sức, và hiểu rằng mỗi lựa chọn nhỏ đều có thể trở thành một phần của con đường lớn hơn.</p>
+      <p class="rv">Cuốn sách này là cách tôi lưu lại những điều đã đi qua: những cuộc thi, những bài toán, những lần thất bại, những lần cố gắng, và cả những điều tôi vẫn chưa biết.</p>
+    </section>
 
-  <!-- MỞ ĐẦU -->
-  <section class="sec" id="open" data-label="Mở đầu">
-    <h2 class="split">Có những câu chuyện chỉ bắt đầu khi ta dám bước đi.</h2>
-    <div class="cols">
-      <p class="rv">Tuổi trẻ không phải là quãng thời gian ta biết tất cả. Đó là lúc ta bắt đầu đặt câu hỏi, thử sức và hiểu rằng mỗi lựa chọn nhỏ đều có thể trở thành một phần của con đường lớn hơn.</p>
-      <p class="rv">Cuốn sách này là cách tôi lưu lại những điều đã đi qua: những cuộc thi, những bài toán, những lần thất bại, những lần cố gắng và cả những điều tôi vẫn chưa biết.</p>
-    </div>
-  </section>
+    <!-- 3. Giới thiệu -->
+    <section class="p about" data-label="Chương I · Giới thiệu">
+      <h2 class="rv">Người đang viết câu chuyện của mình.</h2>
+      <p class="lead rv">Tôi là <strong>Trần Đặng Phước Vinh</strong>.</p>
+      <p class="rv">Sinh ngày 18/11/2009, hiện là học sinh trường THCS &amp; THPT U Minh, Cà Mau. Mỗi ngày tôi đều có thêm một điều mới để học và một câu hỏi mới để tìm lời giải.</p>
+      <p class="rv">Tôi yêu công nghệ và những bài toán cần suy luận. Điều tôi thích nhất là khoảnh khắc một vấn đề rối ren dần trở nên rõ ràng sau nhiều lần nghĩ.</p>
+    </section>
 
-  <!-- GIỚI THIỆU -->
-  <section class="sec" id="about" data-label="Chương I · Giới thiệu">
-  
-    <h2 class="split">Người đang viết câu chuyện của mình.</h2>
-    <div class="cols">
-      <div>
-        <p class="lead rv">Tôi là <strong>Trần Đặng Phước Vinh</strong>.</p>
-        <p class="rv">Sinh ngày 18/11/2009, hiện là học sinh trường THCS &amp; THPT U Minh. Mỗi ngày tôi đều có thêm một điều mới để học và một câu hỏi mới để tìm lời giải.</p>
-        <p class="rv">Tôi là học sinh giỏi Tin học, yêu công nghệ và những bài toán cần suy luận. Điều tôi thích nhất là cảm giác nhìn một vấn đề dần trở nên rõ ràng sau nhiều lần suy nghĩ.</p>
-      </div>
+    <section class="p facts" data-label="Chương I · Giới thiệu">
       <dl class="info">
         <div class="rv"><dt>Họ và tên</dt><dd>Trần Đặng Phước Vinh</dd></div>
         <div class="rv"><dt>Ngày sinh</dt><dd>18/11/2009</dd></div>
         <div class="rv"><dt>Trường</dt><dd>THCS &amp; THPT U Minh</dd></div>
         <div class="rv"><dt>Sở trường</dt><dd>Tin học</dd></div>
-        <div class="rv"><dt>Tỉnh</dt><dd>Cà Mau</dd></div>
+        <div class="rv"><dt>Quê hương</dt><dd>Cà Mau</dd></div>
       </dl>
-    </div>
-    <blockquote class="rv">“Mỗi trang giấy là một bước tiến về phía trước.”</blockquote>
-  </section>
+      <blockquote class="rv">“Mỗi trang giấy là một bước tiến về phía trước.”</blockquote>
+    </section>
 
-  <!-- DẤU MỐC: cuộn ngang -->
-  <section class="hs" id="mile" data-label="Chương II · Dấu mốc">
-    <div class="track" id="track">
-      <div class="panel intro">
-        
-        <h2>Những dấu mốc trên đường.</h2>
-        <p>Từ lớp 8 đến lớp 12, mỗi năm là một trang mới. Cuộn tiếp để lật qua từng trang.</p>
-      </div>
-      <div class="panel card">
-        <b class="num">08</b><h3>Lớp 8</h3>
-        <ul class="ach">
-          <li><b class="chip">Giải Ba</b>Tin học trẻ vòng huyện</li>
-          <li><b class="chip">Giải Ba</b>Tin học trẻ vòng tỉnh</li>
-        </ul>
-      </div>
-      <div class="panel card">
-        <b class="num">09</b><h3>Lớp 9</h3>
-        <ul class="ach">
-          <li><b class="chip">Giải Ba</b>Học sinh giỏi vòng huyện</li>
-          <li><b class="chip">Giải Nhì</b>Học sinh giỏi vòng tỉnh</li>
-          <li><b class="chip">Giải Ba</b>Tin học trẻ vòng huyện</li>
-          <li><b class="chip">Giải Ba</b>Tin học trẻ vòng tỉnh</li>
-          <li><b class="chip">Giải Ba</b>Casio vòng huyện</li>
-          <li><b class="chip">Khuyến khích</b>Casio vòng tỉnh</li>
-        </ul>
-      </div>
-      <div class="panel card">
-        <b class="num">10</b><h3>Lớp 10</h3>
-        <ul class="ach">
-          <li><b class="chip">Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
-          <li><b class="chip">Huy chương Đồng</b>Olympic truyền thống 30/4 lần thứ XXIX tại trường THPT chuyên Lê Hồng Phong</li>
-          <li><b class="chip">Khuyến khích</b>Tin học trẻ vòng tỉnh</li>
-        </ul>
-      </div>
-      <div class="panel card">
-        <b class="num">11</b><h3>Lớp 11</h3>
-        <ul class="ach">
-            <li><b class="chip">Giải ba</b>Học sinh giỏi vòng tỉnh</li>
-        </ul>
-      </div>
-      <div class="panel card now">
-        <b class="num">12</b><h3>Lớp 12 · Hiện tại</h3>
-        <ul class="ach">
-          <li><b class="chip">Thành viên</b>Đội dự tuyển HSG THPT cấp tỉnh</li>
-        </ul>
-        <p class="note"><b>Chương tiếp theo chưa được viết.</b> Và có lẽ đó là điều thú vị nhất của một hành trình.</p>
-      </div>
-      <div class="panel intro">
-        <span class="eb">Sau những cuộc thi</span>
-        <h2>Điều tôi nhận được không chỉ là giải thưởng.</h2>
-        <p>Những cuộc thi đầu tiên giúp tôi nhìn rõ giới hạn của bản thân. Có bài làm đúng, có bài làm sai, có lúc đạt kết quả như mong muốn và cũng có lúc phải bắt đầu lại.</p>
-        <p>Sau mỗi lần như vậy, tôi hiểu thêm rằng năng lực không xuất hiện trong một ngày. Nó được tạo nên từ việc ngồi xuống và giải quyết vấn đề, hết lần này đến lần khác.</p>
-        <p class="note">Thành tích là một dấu mốc. Điều quan trọng hơn là những gì đã học được trên đường đi.</p>
-      </div>
-    </div>
-    <div class="hline"><i id="hfill"></i></div>
-  </section>
+    <!-- 4. Dấu mốc -->
+    <section class="p intro" data-label="Chương II · Dấu mốc">
+      <h2 class="rv">Năm tháng, từng trang một.</h2>
+      <p class="rv">Từ lớp 8 đến lớp 12, mỗi năm học là một trang mới. Có trang đầy những con số, có trang chỉ vài dòng, nhưng trang nào cũng dạy tôi một điều.</p>
+    </section>
 
-  <!-- TIN HỌC -->
-  <section class="sec" id="code" data-label="Tin học">
-    <span class="eb rv">Tin học</span>
-    <h2 class="split">Không chỉ là những dòng code.</h2>
-    <div class="cols">
-      <pre class="codebox rv" id="codebox" data-text="while (đang_học) {&#10;  thử();&#10;  nếu (sai) sửa();&#10;}"></pre>
-      <div>
-        <p class="rv">Tin học với tôi là cách tiếp cận một vấn đề: chia nhỏ nó thành những phần có thể hiểu được rồi từng bước tìm ra lời giải.</p>
-        <p class="rv">Những bài toán thuật toán dạy tôi sự kiên nhẫn. Một chương trình sai không có nghĩa là thất bại; đôi khi nó chỉ cho biết rằng mình cần nhìn vấn đề từ một góc khác.</p>
-      </div>
-    </div>
-  </section>
+    <section class="p grade" data-label="Chương II · Lớp 8">
+      <b class="num" aria-hidden="true">8</b>
+      <h3 class="rv">Lớp 8</h3>
+      <ul class="ach">
+        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng huyện</li>
+        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng tỉnh</li>
+      </ul>
+    </section>
 
-  
-  <!-- ĐIỀU TRÂN TRỌNG + PHÍA TRƯỚC -->
-  <section class="sec" id="values" data-label="Điều tôi trân trọng">
-    <span class="eb rv">Điều tôi trân trọng</span>
-    <h2 class="split">Ba điều tôi mang theo trên đường.</h2>
-    <ul class="vals">
-      <li class="rv"><h3>Kiên nhẫn</h3><p>Lời giải thường đến sau nhiều lần thử, không phải sau lần đầu.</p></li>
-      <li class="rv"><h3>Tò mò</h3><p>Một câu hỏi hay luôn dẫn đến câu hỏi hay hơn.</p></li>
-      <li class="rv"><h3>Dám thử lại</h3><p>Sai một lần chỉ là thêm một cách không hiệu quả đã được biết.</p></li>
-    </ul>
-  </section>
+    <section class="p grade" data-label="Chương II · Lớp 9">
+      <b class="num" aria-hidden="true">9</b>
+      <h3 class="rv">Lớp 9</h3>
+      <ul class="ach">
+        <li class="rv"><b>Giải Ba</b>Học sinh giỏi vòng huyện</li>
+        <li class="rv"><b>Giải Nhì</b>Học sinh giỏi vòng tỉnh</li>
+        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng huyện</li>
+        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng tỉnh</li>
+        <li class="rv"><b>Giải Ba</b>Casio vòng huyện</li>
+        <li class="rv"><b>Khuyến khích</b>Casio vòng tỉnh</li>
+      </ul>
+    </section>
 
-  <section class="sec" id="future" data-label="Nhìn về phía trước">
-    <span class="eb rv">Nhìn về phía trước</span>
-    <h2 class="split">Tôi vẫn đang viết tiếp.</h2>
-    <div class="cols">
+    <section class="p grade" data-label="Chương II · Lớp 10">
+      <b class="num" aria-hidden="true">10</b>
+      <h3 class="rv">Lớp 10</h3>
+      <ul class="ach">
+        <li class="rv"><b>Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
+        <li class="rv"><b>Huy chương Đồng</b>Olympic truyền thống 30/4 lần thứ XXIX, trường THPT chuyên Lê Hồng Phong</li>
+        <li class="rv"><b>Khuyến khích</b>Tin học trẻ vòng tỉnh</li>
+      </ul>
+    </section>
+
+    <section class="p grade" data-label="Chương II · Lớp 11">
+      <b class="num" aria-hidden="true">11</b>
+      <h3 class="rv">Lớp 11</h3>
+      <ul class="ach">
+        <li class="rv"><b>Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
+      </ul>
+    </section>
+
+    <section class="p grade now" data-label="Chương II · Lớp 12">
+      <b class="num" aria-hidden="true">12</b>
+      <h3 class="rv">Lớp 12 · Hiện tại</h3>
+      <ul class="ach">
+        <li class="rv"><b>Thành viên</b>Đội dự tuyển học sinh giỏi THPT cấp tỉnh</li>
+      </ul>
+      <p class="note rv"><strong>Chương tiếp theo chưa được viết.</strong> Và có lẽ đó là điều thú vị nhất của một hành trình.</p>
+    </section>
+
+    <section class="p wide" data-label="Chương II · Sau những cuộc thi">
+      <h2 class="rv">Điều tôi nhận được không chỉ là giải thưởng.</h2>
+      <p class="rv">Những cuộc thi đầu tiên giúp tôi nhìn rõ giới hạn của bản thân. Có bài làm đúng, có bài làm sai, có lúc đạt kết quả như mong muốn và cũng có lúc phải bắt đầu lại.</p>
+      <p class="rv">Sau mỗi lần như vậy, tôi hiểu thêm rằng năng lực không xuất hiện trong một ngày. Nó được tạo nên từ việc ngồi xuống và giải quyết vấn đề, hết lần này đến lần khác.</p>
+      <p class="note rv">Thành tích là một dấu mốc. Điều quan trọng hơn là những gì đã học được trên đường đi.</p>
+    </section>
+
+    <!-- 5. Tin học -->
+    <section class="p code" data-label="Chương III · Tin học">
+      <h2 class="rv">Không chỉ là những dòng code.</h2>
+      <pre class="codebox rv" id="codebox">while (đang_học) {
+  thử();
+  nếu (sai) sửa();
+}</pre>
+      <p class="rv">Tin học với tôi là cách tiếp cận một vấn đề: chia nhỏ nó thành những phần có thể hiểu được, rồi từng bước tìm ra lời giải.</p>
+      <p class="rv">Những bài toán thuật toán dạy tôi sự kiên nhẫn. Một chương trình sai không có nghĩa là thất bại; đôi khi nó chỉ cho biết rằng mình cần nhìn vấn đề từ một góc khác.</p>
+    </section>
+
+    <!-- 6. Điều trân trọng -->
+    <section class="p vals" data-label="Chương IV · Điều tôi trân trọng">
+      <h2 class="rv">Ba điều tôi mang theo trên đường.</h2>
+      <ul>
+        <li class="rv"><h3>Kiên nhẫn</h3><p>Lời giải thường đến sau nhiều lần thử, không phải sau lần đầu.</p></li>
+        <li class="rv"><h3>Tò mò</h3><p>Một câu hỏi hay luôn dẫn đến một câu hỏi hay hơn.</p></li>
+        <li class="rv"><h3>Dám thử lại</h3><p>Sai một lần chỉ là biết thêm một cách chưa hiệu quả.</p></li>
+      </ul>
+    </section>
+
+    <!-- 7. Phía trước -->
+    <section class="p wide" data-label="Nhìn về phía trước">
+      <h2 class="rv">Tôi vẫn đang viết tiếp.</h2>
       <p class="lead rv">Chưa biết chương cuối sẽ như thế nào.</p>
-      <p class="rv">Nhưng tôi biết mình còn rất nhiều điều muốn học, muốn thử sức và muốn khám phá: thêm những cuộc thi, những dự án, những bài toán khó hơn và cả những trải nghiệm mà hôm nay tôi chưa thể đoán trước.</p>
-    </div>
-    <p class="sign rv">Trần Đặng Phước Vinh</p>
-  </section>
+      <p class="rv">Nhưng tôi biết mình còn rất nhiều điều muốn học, muốn thử sức và muốn khám phá: thêm những cuộc thi, những dự án, những bài toán khó hơn, và cả những trải nghiệm mà hôm nay tôi chưa thể đoán trước.</p>
+      <p class="sign rv">Trần Đặng Phước Vinh</p>
+    </section>
 
-  <!-- LIÊN HỆ -->
-  <section class="sec" id="contact" data-label="Liên hệ">
-    <span class="eb rv">Chương cuối</span>
-    <h2 class="split">Hãy để lại một lời nhắn.</h2>
-    <p class="rv wide">Một cuốn sách có thể khép lại, nhưng một cuộc trò chuyện có thể mở ra một chương hoàn toàn mới.</p>
-    <div class="icons rv">
-      <button id="phoneBtn" aria-label="Sao chép số điện thoại"><svg class="ic"><use href="#i-phone"/></svg></button>
-      <button id="mailBtn" aria-label="Sao chép email"><svg class="ic"><use href="#i-mail"/></svg></button>
-      <a href="https://www.facebook.com/anhlavinhdepzai" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg class="ic"><use href="#i-fb"/></svg></a>
-      <a href="https://www.tiktok.com/@trandangphuocvinh" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg class="ic"><use href="#i-tt"/></svg></a>
-      <a href="https://locket.cam/ph.vinh" target="_blank" rel="noopener noreferrer" aria-label="Locket"><svg class="ic"><use href="#i-heart"/></svg></a>
-    </div>
-  </section>
+    <!-- 8. Liên hệ -->
+    <section class="p contact" data-label="Chương cuối · Liên hệ">
+      <h2 class="rv">Hãy để lại một lời nhắn.</h2>
+      <p class="rv">Một cuốn sách có thể khép lại, nhưng một cuộc trò chuyện có thể mở ra một chương hoàn toàn mới.</p>
+      <div class="icons rv">
+        <button id="phoneBtn" aria-label="Sao chép số điện thoại"><svg class="ic"><use href="#i-phone"/></svg></button>
+        <button id="mailBtn" aria-label="Sao chép email"><svg class="ic"><use href="#i-mail"/></svg></button>
+        <a href="https://www.facebook.com/anhlavinhdepzai" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg class="ic"><use href="#i-fb"/></svg></a>
+        <a href="https://www.tiktok.com/@trandangphuocvinh" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg class="ic"><use href="#i-tt"/></svg></a>
+        <a href="https://locket.cam/ph.vinh" target="_blank" rel="noopener noreferrer" aria-label="Locket"><svg class="ic"><use href="#i-heart"/></svg></a>
+      </div>
+    </section>
 
-  <!-- CẢM ƠN -->
-  <section class="thanks" id="thanks" data-label="Cảm ơn">
-    <p class="split">Cảm ơn vì bạn đã dành thời gian để trải nghiệm hành trình phát triển của tôi.</p>
-    <svg class="ic heart" aria-hidden="true"><use href="#i-heart"/></svg>
-  </section>
-
+    <!-- 9. Cảm ơn -->
+    <section class="p thanks" data-label="Cảm ơn">
+      <p class="rv">Cảm ơn vì bạn đã dành thời gian để đi cùng hành trình của tôi.</p>
+      <svg class="ic heart rv" aria-hidden="true"><use href="#i-heart"/></svg>
+      <small class="rv">© 2026 Trần Đặng Phước Vinh</small>
+    </section>
+  </div>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"><svg class="ic"><use href="#i-check"/></svg><span></span></div>
-<footer><span>© 2026 Trần Đặng Phước Vinh</span><span>Khi Tuổi Trẻ Còn Đang Viết</span></footer>
 
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
