@@ -14,33 +14,35 @@
 <script>
 if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
   document.documentElement.classList.add("ld");
-  setTimeout(()=>document.documentElement.classList.remove("ld"),12000);
+  /* chỉ gỡ loader nếu GSAP không tải được (mất mạng...) hoặc có sự cố bất ngờ */
+  addEventListener("load",()=>{ if(!window.gsap||!window.ScrollTrigger) document.documentElement.classList.remove("ld"); });
+  /* nếu sau 6 giây loader vẫn chưa chạy (script lỗi / tải quá chậm) thì gỡ để khách vào được web */
+  setTimeout(()=>{ if(!document.documentElement.classList.contains("ldgo")) document.documentElement.classList.remove("ld"); },6000);
+  setTimeout(()=>document.documentElement.classList.remove("ld"),30000);
 }
 </script>
 </head>
 <body>
-  <div class="loader" id="loader" aria-hidden="true">
-  <div class="ld-name"><span class="m"><span>Trần <em>Vinh</em></span></span></div>
-  <div class="ld-black"></div>
-
-  <svg class="ld-char" viewBox="0 0 110 140">
-    <ellipse cx="58" cy="131" rx="26" ry="3.5" fill="#1d4568" opacity=".15"/>
-    <g class="bob">
-      <g class="leg b"><g class="th"><path d="M60 84V104"/><g class="sn"><path d="M60 104V124l9 1"/></g></g></g>
-      <g class="leg"><g class="th"><path d="M60 84V104"/><g class="sn"><path d="M60 104V124l9 1"/></g></g></g>
-      <g class="up" transform="rotate(14 60 84)">
-        <rect x="39" y="48" width="16" height="27" rx="5" fill="#2b5b86"/>
-        <path class="tr" d="M60 84V48"/>
-        <g class="scarf"><path class="sc" d="M60 47q-10-3-23 5"/></g>
-        <g class="arm b"><path d="M58 54l14 10 20-2"/></g>
-        <g class="arm"><path d="M60 52l16 8 18-4"/></g>
-        <circle cx="62" cy="32" r="12" fill="#f8f9f6"/>
-        <path class="f" d="M50 31C50 20 58 17 66 19C72 21 74 26 73 29C66 24 58 25 50 31Z"/>
-        <circle class="f" cx="69" cy="33" r="1.8"/>
-        <circle class="ck" cx="68" cy="39" r="3"/>
-      </g>
-    </g>
-  </svg>
+ <div class="loader" id="loader" aria-hidden="true">
+  <!-- Trang tựa: hai nửa trang giống hệt nhau, ghép lại thành một tờ giấy; hai mép mở ra ở giữa -->
+  <div class="pg-half pg-l"><div class="pg-sheet">
+      <div class="pg-content">
+        <p class="pg-name">TRẦN VINH</p>
+        <i class="pg-rule t"></i>
+        <h2 class="pg-title"><span class="ln l1"><span>Khi Tuổi Trẻ</span></span><span class="ln l2"><span><em>Còn Đang Viết</em></span></span></h2>
+        <i class="pg-rule b"></i>
+        <p class="pg-year">2026</p>
+      </div>
+     </div></div>
+  <div class="pg-half pg-r"><div class="pg-sheet">
+      <div class="pg-content">
+        <p class="pg-name">TRẦN VINH</p>
+        <i class="pg-rule t"></i>
+        <h2 class="pg-title"><span class="ln l1"><span>Khi Tuổi Trẻ</span></span><span class="ln l2"><span><em>Còn Đang Viết</em></span></span></h2>
+        <i class="pg-rule b"></i>
+        <p class="pg-year">2026</p>
+      </div>
+      </div></div>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
@@ -54,6 +56,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 <header class="top">
   <span class="brand"><b>TV</b><span>Phước Vinh</span></span>
   <span class="label" id="label">Mở đầu</span>
+  <span class="count" id="count">01 / 17</span>
   <i class="bar" id="bar"></i>
 </header>
 
@@ -64,8 +67,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 <main id="world">
   <div class="track" id="track">
     <svg class="ink" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
-      <path id="ink" pathLength="1" vector-effect="non-scaling-stroke" d="M0 84 C60 68 110 98 170 82 S280 66 340 84 S450 98 520 80 S640 64 700 84 S820 98 880 82 S960 72 1000 80"/>
-    </svg>
+   </svg>
 
     <!-- 1. Mở đầu -->
     <section class="p hero" data-label="Mở đầu">
@@ -73,11 +75,11 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <h1 id="h1">Khi Tuổi Trẻ<br><em>Còn Đang Viết</em></h1>
       <p class="sub hi">Một hành trình của những ngày tháng đang lớn lên.</p>
       <p class="by hi">Trần Đặng Phước Vinh</p>
-      <p class="cue hi"><i></i>Cuộn xuống, trang sẽ lật sang phải</p>
     </section>
 
     <!-- 2. Lời mở -->
     <section class="p wide" data-label="Lời mở">
+      <p class="eyebrow rv">Lời mở</p>
       <h2 class="rv">Có những câu chuyện chỉ bắt đầu khi ta dám bước đi.</h2>
       <p class="rv">Tuổi trẻ không phải là quãng thời gian ta biết tất cả. Đó là lúc ta bắt đầu đặt câu hỏi, thử sức, và hiểu rằng mỗi lựa chọn nhỏ đều có thể trở thành một phần của con đường lớn hơn.</p>
       <p class="rv">Cuốn sách này là cách tôi lưu lại những điều đã đi qua: những cuộc thi, những bài toán, những lần thất bại, những lần cố gắng, và cả những điều tôi vẫn chưa biết.</p>
@@ -85,6 +87,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 
     <!-- 3. Giới thiệu -->
     <section class="p about" data-label="Chương I · Giới thiệu">
+      <p class="eyebrow rv">Chương I</p>
       <h2 class="rv">Người đang viết câu chuyện của mình.</h2>
       <p class="lead rv">Tôi là <strong>Trần Đặng Phước Vinh</strong>.</p>
       <p class="rv">Sinh ngày 18/11/2009, hiện là học sinh trường THCS &amp; THPT U Minh, Cà Mau. Mỗi ngày tôi đều có thêm một điều mới để học và một câu hỏi mới để tìm lời giải.</p>
@@ -104,6 +107,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 
     <!-- 4. Dấu mốc -->
     <section class="p intro" data-label="Chương II · Dấu mốc">
+      <p class="eyebrow rv">Chương II</p>
       <h2 class="rv">Năm tháng, từng trang một.</h2>
       <p class="rv">Từ lớp 8 đến lớp 12, mỗi năm học là một trang mới. Có trang đầy những con số, có trang chỉ vài dòng, nhưng trang nào cũng dạy tôi một điều.</p>
     </section>
@@ -112,8 +116,8 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <b class="num" aria-hidden="true">8</b>
       <h3 class="rv">Lớp 8</h3>
       <ul class="ach">
-        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng huyện</li>
-        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng tỉnh</li>
+        <li class="rv ba"><b>Giải Ba</b>Tin học trẻ vòng huyện</li>
+        <li class="rv ba"><b>Giải Ba</b>Tin học trẻ vòng tỉnh</li>
       </ul>
     </section>
 
@@ -121,12 +125,12 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <b class="num" aria-hidden="true">9</b>
       <h3 class="rv">Lớp 9</h3>
       <ul class="ach">
-        <li class="rv"><b>Giải Ba</b>Học sinh giỏi vòng huyện</li>
-        <li class="rv"><b>Giải Nhì</b>Học sinh giỏi vòng tỉnh</li>
-        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng huyện</li>
-        <li class="rv"><b>Giải Ba</b>Tin học trẻ vòng tỉnh</li>
-        <li class="rv"><b>Giải Ba</b>Casio vòng huyện</li>
-        <li class="rv"><b>Khuyến khích</b>Casio vòng tỉnh</li>
+        <li class="rv ba"><b>Giải Ba</b>Học sinh giỏi vòng huyện</li>
+        <li class="rv nhi"><b>Giải Nhì</b>Học sinh giỏi vòng tỉnh</li>
+        <li class="rv ba"><b>Giải Ba</b>Tin học trẻ vòng huyện</li>
+        <li class="rv ba"><b>Giải Ba</b>Tin học trẻ vòng tỉnh</li>
+        <li class="rv ba"><b>Giải Ba</b>Casio vòng huyện</li>
+        <li class="rv kk"><b>Khuyến khích</b>Casio vòng tỉnh</li>
       </ul>
     </section>
 
@@ -134,9 +138,9 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <b class="num" aria-hidden="true">10</b>
       <h3 class="rv">Lớp 10</h3>
       <ul class="ach">
-        <li class="rv"><b>Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
-        <li class="rv"><b>Huy chương Đồng</b>Olympic truyền thống 30/4 lần thứ XXIX, trường THPT chuyên Lê Hồng Phong</li>
-        <li class="rv"><b>Khuyến khích</b>Tin học trẻ vòng tỉnh</li>
+        <li class="rv ba"><b>Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
+        <li class="rv hc"><b>Huy chương Đồng</b>Olympic truyền thống 30/4 lần thứ XXIX, trường THPT chuyên Lê Hồng Phong</li>
+        <li class="rv kk"><b>Khuyến khích</b>Tin học trẻ vòng tỉnh</li>
       </ul>
     </section>
 
@@ -144,7 +148,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <b class="num" aria-hidden="true">11</b>
       <h3 class="rv">Lớp 11</h3>
       <ul class="ach">
-        <li class="rv"><b>Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
+        <li class="rv ba"><b>Giải Ba</b>Học sinh giỏi vòng tỉnh</li>
       </ul>
     </section>
 
@@ -152,9 +156,20 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <b class="num" aria-hidden="true">12</b>
       <h3 class="rv">Lớp 12 · Hiện tại</h3>
       <ul class="ach">
-        <li class="rv"><b>Thành viên</b>Đội dự tuyển học sinh giỏi THPT cấp tỉnh</li>
+        <li class="rv tv"><b>Thành viên</b>Đội dự tuyển học sinh giỏi THPT cấp tỉnh</li>
       </ul>
       <p class="note rv"><strong>Chương tiếp theo chưa được viết.</strong> Và có lẽ đó là điều thú vị nhất của một hành trình.</p>
+    </section>
+
+    <!-- Những con số -->
+    <section class="p vals stats" data-label="Chương II · Những con số">
+      <p class="eyebrow rv">Nhìn lại</p>
+      <h2 class="rv">Vài con số nhỏ trên chặng đường.</h2>
+      <ul>
+        <li class="rv"><b class="cnt" data-to="12">12</b><p>thành tích từ lớp 8 đến lớp 11</p></li>
+        <li class="rv"><b class="cnt" data-to="5">5</b><p>năm học, từ lớp 8 đến lớp 12</p></li>
+        <li class="rv"><b class="cnt" data-to="1">1</b><p>sở trường đi cùng tôi: Tin học</p></li>
+      </ul>
     </section>
 
     <section class="p wide" data-label="Chương II · Sau những cuộc thi">
@@ -166,6 +181,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 
     <!-- 5. Tin học -->
     <section class="p code" data-label="Chương III · Tin học">
+      <p class="eyebrow rv">Chương III</p>
       <h2 class="rv">Không chỉ là những dòng code.</h2>
       <pre class="codebox rv" id="codebox">while (đang_học) {
   thử();
@@ -177,6 +193,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 
     <!-- 6. Điều trân trọng -->
     <section class="p vals" data-label="Chương IV · Điều tôi trân trọng">
+      <p class="eyebrow rv">Chương IV</p>
       <h2 class="rv">Ba điều tôi mang theo trên đường.</h2>
       <ul>
         <li class="rv"><h3>Kiên nhẫn</h3><p>Lời giải thường đến sau nhiều lần thử, không phải sau lần đầu.</p></li>
@@ -187,6 +204,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 
     <!-- 7. Phía trước -->
     <section class="p wide" data-label="Nhìn về phía trước">
+      <p class="eyebrow rv">Phần kết</p>
       <h2 class="rv">Tôi vẫn đang viết tiếp.</h2>
       <p class="lead rv">Chưa biết chương cuối sẽ như thế nào.</p>
       <p class="rv">Nhưng tôi biết mình còn rất nhiều điều muốn học, muốn thử sức và muốn khám phá: thêm những cuộc thi, những dự án, những bài toán khó hơn, và cả những trải nghiệm mà hôm nay tôi chưa thể đoán trước.</p>
@@ -195,6 +213,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
 
     <!-- 8. Liên hệ -->
     <section class="p contact" data-label="Chương cuối · Liên hệ">
+      <p class="eyebrow rv">Chương cuối</p>
       <h2 class="rv">Hãy để lại một lời nhắn.</h2>
       <p class="rv">Một cuốn sách có thể khép lại, nhưng một cuộc trò chuyện có thể mở ra một chương hoàn toàn mới.</p>
       <div class="icons rv">

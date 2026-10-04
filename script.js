@@ -52,14 +52,22 @@ const mm = gsap.matchMedia();
 
 /* ===== Đầy đủ hiệu ứng: cuộn dọc → trang trôi ngang ===== */
 mm.add("(prefers-reduced-motion: no-preference)", () => {
+  try {
   document.documentElement.classList.add("fx");
   const track = $("#track"), ink = $("#ink"), bar = $("#bar");
-  const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+  // Đo theo bố cục thật (offsetLeft/offsetWidth không tính transform, khác scrollWidth bị cộng phần đang lệch x:100).
+  // Cuộn tới khi TRANG CUỐI nằm đúng giữa màn hình (không dồn sát trái, không chừa trống bên phải).
+  const dist = () => {
+    const last = track.lastElementChild;
+    return Math.max(0, last.offsetLeft + last.offsetWidth / 2 - document.documentElement.clientWidth / 2);
+  };
   const k = () => (innerWidth < 900 ? 1 : 1.15);        // màn nhỏ: cuộn dọc ngắn hơn cho dễ vuốt
   const len = () => "+=" + Math.round(dist() * k());
   // Nét mực chỉ "viết" một lần lúc mở trang, không vẽ lại theo từng khung hình cuộn → cuộn mượt
-  const inkTw = gsap.fromTo(ink, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 3.2, ease: "power2.inOut", paused: true });
-  if (matchMedia("(pointer:coarse)").matches) $(".cue").lastChild.textContent = "Vuốt lên, trang sẽ lật sang phải";
+  const inkTw = ink ? gsap.fromTo(ink, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 3.2, ease: "power2.inOut", paused: true })
+                    : gsap.timeline({ paused: true });   // không có nét mực trong HTML thì bỏ qua
+  const cue = $(".cue");
+  if (cue && matchMedia("(pointer:coarse)").matches) cue.lastChild.textContent = "Vuốt lên, trang sẽ lật sang phải";
 
   // Chuyển động chính: ghim thế giới, kéo track sang trái theo cuộn dọc
   const hs = gsap.to(track, {
@@ -76,51 +84,88 @@ mm.add("(prefers-reduced-motion: no-preference)", () => {
 
   // Mở màn: một khoảnh khắc duy nhất, có chủ đích
   splitWords($("#h1"));
- gsap.set(".hero .w > span", { yPercent: -115 });
-gsap.set(".hi", { y: -28 });
-  // Phần mở đầu: các mục rơi xuống lần lượt từ trên xuống
-const intro = () => gsap.timeline({ defaults: { ease: "power3.out" } })
-  .to(".kick", { opacity: 1, y: 0, duration: 0.8 })
-  .to(".hero .w > span", { yPercent: 0, duration: 1, stagger: 0.08 }, "-=0.5")
-  .to([".sub", ".by", ".cue"], { opacity: 1, y: 0, duration: 0.9, stagger: 0.15 }, "-=0.6")
-  .add(() => inkTw.play(), 0.4);
+  // ẩn hẳn (không chỉ đẩy lên) để không lộ đuôi chữ "g" của "Đang" qua mép che khi màn đang kéo
+  gsap.set(".hero .w > span", { yPercent: -130, autoAlpha: 0 });
+  gsap.set(".hi", { y: -28 });
 
-// Loader: nhân vật chạy từ trái sang phải đẩy màn đen ra → hiện tên → 0.7s sau hero xuất hiện
-const loader = $("#loader"), black = $(".ld-black"), chr = $(".ld-char"), nm = $(".ld-name .m > span");
-const runLoader = () => {
-  const W = innerWidth, a = chr.offsetWidth * 0.9, GAP = 0.7;   // a = khoảng cách từ mép trái nhân vật tới bàn tay
-  const run = { duration: 3.4, ease: "sine.inOut" };             // chạy chậm; tăng duration nếu muốn chậm hơn
-  gsap.set(chr, { x: -a, opacity: 1 });
-  gsap.set(nm, { yPercent: 115 });
-  gsap.timeline()
-    .to(black, { x: W + a, ...run }, 0.3)
-    .to(chr, { x: W, ...run }, 0.3)                              // cùng thời gian + easing → tay luôn chạm mép đen
-    .to(nm, { yPercent: 0, duration: 0.9, ease: "power3.out" }, "-=0.5")
-    .add(intro(), `>+${GAP}`)                                    // 0.7s sau khi tên hiện xong
-    .to(nm, { yPercent: -115, duration: 0.6, ease: "power3.in",
-      onComplete: () => { document.documentElement.classList.remove("ld"); ScrollTrigger.refresh(); } }, "<");
-};
-Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then(runLoader);
+  // Trang hiện tại: nhãn chương, số trang, tông nền đổi dần theo từng chương
+  const root = document.documentElement, pages = $$(".p");
+  const tones = [
+    ["Mở đầu", "#dfeaf3", "#f5e6ea"], ["Lời mở", "#e8eef5", "#f3ebe3"],
+    ["Chương I ·", "#e3edf5", "#e9f0e6"], ["Chương II ·", "#dbe6f2", "#f2e4e8"],
+    ["Chương III ·", "#d8e4ee", "#e4e8f3"], ["Chương IV ·", "#f1e4e8", "#e3ecf4"],
+    ["Nhìn về", "#e6eef5", "#f5e8e2"], ["Chương cuối", "#f4e3e8", "#dfe9f2"], ["Cảm ơn", "#f4e3e8", "#dfe9f2"]
+  ];
+  gsap.set(root, { "--w1": tones[0][1], "--w2": tones[0][2] });
+  const setPage = p => {
+    $("#label").textContent = p.dataset.label;
+    $("#count").textContent = String(pages.indexOf(p) + 1).padStart(2, "0") + " / " + String(pages.length).padStart(2, "0");
+    const t = tones.find(t => p.dataset.label.startsWith(t[0]));
+    if (t) gsap.to(root, { "--w1": t[1], "--w2": t[2], duration: 1.6, ease: "power2.out", overwrite: "auto" });
+  };
+  setPage(pages[0]);
+
+  // Phần mở đầu: các mục rơi xuống lần lượt từ trên xuống (chạy sau khi nền và các đường cong đã hiện)
+  const intro = () => gsap.timeline({ defaults: { ease: "power3.out" } })
+    .to(".kick", { opacity: 1, y: 0, duration: 0.8 })
+    .to(".hero .w > span", { yPercent: 0, autoAlpha: 1, duration: 1, stagger: 0.08 }, "-=0.5")
+    .to([".sub", ".by", ".cue"], { opacity: 1, y: 0, duration: 0.9, stagger: 0.15 }, "-=0.6")
+    .add(() => inkTw.play(), 0.4);
+
+  /* ===== Loader tự chạy: trang tựa như một tờ giấy → chữ hiện trên trang → nét mực chạy ngang
+     → hai mép trang mở ra ở giữa → chỉ còn nền trơn → đường cong / hiệu ứng nền hiện dần → nội dung hiện dần ===== */
+  // mỗi mục có 2 bản (nửa trái, nửa phải) nên luôn chọn cả hai và chạy đồng bộ
+  const pgName = $$(".pg-name"), pgRuleT = $$(".pg-rule.t"), pgRuleB = $$(".pg-rule.b"),
+        pgL1 = $$(".pg-title .l1 > span"), pgL2 = $$(".pg-title .l2 > span"),
+        pgYear = $$(".pg-year"), pgInk = $$(".pg-ink path"), pgL = $(".pg-l"), pgR = $(".pg-r");
+  let started = false;
+
+  const startLoader = () => {
+    if (started) return; started = true;
+    if (!root.classList.contains("ld")) { intro(); return; }   // mạng chậm: loader đã bị gỡ, hiện nội dung ngay
+    root.classList.add("ldgo");
+    const HOLD = 0.53242;   // <<< CHỈNH Ở ĐÂY: số giây chờ sau khi chữ hiện hết rồi mới mở hai mép trang (nhỏ hơn = mở nhanh hơn)
+    const rise = { yPercent: 130, autoAlpha: 0 };               // ẩn hẳn, không lộ đuôi chữ "g" của "Đang"
+    gsap.timeline({ defaults: { ease: "power3.out" } })
+      // 1) Tên
+      .fromTo(pgName, { autoAlpha: 0, y: 10, letterSpacing: "0.7em" }, { autoAlpha: 1, y: 0, letterSpacing: "0.42em", duration: 1.1 }, 0.4)
+      // 2) Đường kẻ trên → tiêu đề → đường kẻ dưới → năm
+      .fromTo(pgRuleT, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 1, ease: "power2.inOut" }, "-=0.5")
+      .fromTo(pgL1, rise, { yPercent: 0, autoAlpha: 1, duration: 1.1 }, "-=0.55")
+      .fromTo(pgL2, rise, { yPercent: 0, autoAlpha: 1, duration: 1.1 }, "-=0.9")
+      .fromTo(pgRuleB, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 1, ease: "power2.inOut" }, "-=0.6")
+      .fromTo(pgYear, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.9 }, "-=0.5")
+      // 3) Một đường mực chạy ngang qua trang, chạy trong lúc chờ và kết thúc đúng lúc trang bắt đầu mở
+      .fromTo(pgInk, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: HOLD + 0.2, ease: "power2.inOut" }, "-=0.2")
+      // 4) Hai mép trang mở ra ở giữa; chữ và nét mực tách đôi theo từng nửa
+      .fromTo([pgL, pgR], { "--sh": 0 }, { "--sh": 1, duration: 0.35, ease: "none" }, ">")
+      .to(pgL, { xPercent: -100, duration: 1.5, ease: "power3.inOut" }, "<")
+      .to(pgR, { xPercent: 100, duration: 1.5, ease: "power3.inOut" }, "<")
+      // 5) Trang đã mở hoàn toàn: nền, các đường cong hiện dần, rồi nội dung hiện dần
+      .add(() => { root.classList.remove("ld"); ScrollTrigger.refresh(); })
+      .add(intro(), ">+1.1");
+  };
+  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then(startLoader);
 
   // Tiêu đề: từng từ trồi lên khi trang tới (bỏ .rv để không bị tween hai lần)
   $$(".p:not(.hero) h2").forEach(h => {
     h.classList.remove("rv"); splitWords(h);
     const ws = h.querySelectorAll(".w > span");
-    gsap.set(ws, { yPercent: 118 });
-    gsap.to(ws, { yPercent: 0, duration: 1.1, stagger: 0.08, ease: "power3.out",
+    gsap.set(ws, { xPercent: 110, autoAlpha: 0 });
+    gsap.to(ws, { xPercent: 0, autoAlpha: 1, duration: 1.1, stagger: 0.08, ease: "power3.out",
       scrollTrigger: { trigger: h, containerAnimation: hs, start: "left 85%", once: true } });
   });
 
   // Mỗi trang: nội dung trượt vào theo chiều ngang khi trang tiến tới; nhãn chương đổi theo trang
   $$(".p").forEach(p => {
     const items = p.querySelectorAll(".rv");
-    if (items.length) gsap.fromTo(items, { opacity: 0, x: 70 }, {
+    if (items.length) gsap.fromTo(items, { opacity: 0, x: 100 }, {
       opacity: 1, x: 0, duration: 1.1, stagger: 0.13, ease: "power3.out",
       scrollTrigger: { trigger: p, containerAnimation: hs, start: "left 82%", once: true, onEnter: () => p.classList.add("on") }
     });
     ScrollTrigger.create({
       trigger: p, containerAnimation: hs, start: "left 60%", end: "right 60%",
-      onToggle: s => { if (s.isActive) { $("#label").textContent = p.dataset.label; } }
+      onToggle: s => { if (s.isActive) setPage(p); }
     });
   });
 
@@ -162,6 +207,14 @@ Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then
   ScrollTrigger.create({ trigger: heart, containerAnimation: hs, start: "left 70%", once: true, onEnter: () => setTimeout(burst, 900) });
   heart.addEventListener("click", () => burst(10));
 
+  // Con số đếm lên khi trang tới
+  $$(".cnt").forEach(el => {
+    const to = +el.dataset.to, o = { n: 0 };
+    el.textContent = "0";
+    ScrollTrigger.create({ trigger: el, containerAnimation: hs, start: "left 85%", once: true,
+      onEnter: () => gsap.to(o, { n: to, duration: 1.6, delay: 0.3, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(o.n); } }) });
+  });
+
   // Gõ code khi trang Tin học tới gần
   code.textContent = "";
   const typed = { n: 0 }; let shown = -1;
@@ -172,7 +225,13 @@ Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then
       onComplete: () => (code.textContent = full) })
   });
 
-  return () => document.documentElement.classList.remove("fx");
+  return () => { document.documentElement.classList.remove("fx"); document.documentElement.classList.remove("ld"); };
+  } catch (err) {
+    // Có lỗi bất ngờ: bỏ lớp phủ + chế độ ghim để trang vẫn hiện và cuộn ngang được
+    console.error(err);
+    document.documentElement.classList.remove("fx", "ld");
+    gsap.set([".hi", ".rv", ".hero .w > span", ".p h2 .w > span"], { clearProps: "all" });
+  }
 });
 
 /* ===== Giảm chuyển động: không ghim, trang cuộn ngang tự nhiên bằng tay ===== */
