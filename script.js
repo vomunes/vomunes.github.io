@@ -1,241 +1,541 @@
-gsap.registerPlugin(ScrollTrigger);
-ScrollTrigger.config({ ignoreMobileResize: true });
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+/* Khi Tuổi Trẻ Còn Đang Viết — script.js
+   Cuộn dọc → hành trình ngang (GSAP + ScrollTrigger), có fallback cuộn ngang gốc.
 
-/* ===== Liên hệ (luôn hoạt động) ===== */
-const toast = $("#toast");
-function showToast(msg) {
-  toast.querySelector("span").textContent = msg;
-  gsap.killTweensOf(toast);
-  gsap.timeline()
-    .fromTo(toast, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" })
-    .to(toast, { y: 20, opacity: 0, duration: 0.4, ease: "power2.in" }, "+=1.5");
-}
-async function copy(text, msg) {
-  try { await navigator.clipboard.writeText(text); }
-  catch {
-    const ta = document.createElement("textarea");
-    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
-    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
-  }
-  showToast(msg);
-}
-$("#phoneBtn").addEventListener("click", () => copy("0919951334", "Đã sao chép số điện thoại"));
-$("#mailBtn").addEventListener("click", () => copy("vinhtrandangphuoc@gmail.com", "Đã sao chép email"));
-if (matchMedia("(hover:hover)").matches) $$(".icons a, .icons button").forEach(el => {
-  el.addEventListener("pointerenter", () => gsap.to(el, { y: -4, duration: 0.3, ease: "power2.out", overwrite: true }));
-  el.addEventListener("pointerleave", () => gsap.to(el, { y: 0, duration: 0.3, ease: "power2.out", overwrite: true }));
-});
+   Mục lục:
+   1 DOM cache · 2 thiết bị & tier · 3 state · 4 liên hệ (toast/copy) · 5 chia section theo chiều cao
+   6 trang/nhãn/tiến trình · 7 chế độ tĩnh (fallback) · 8 chế độ GSAP: đo đạc, controller ngang, focus,
+   hero intro, loader, reveal, đếm số, gõ code, trái tim, bụi, resize, dọn dẹp · 9 khởi động */
+(() => {
+  "use strict";
 
-/* ===== Tách từ cho tiêu đề hero (giữ <br>, giữ nhãn cho trình đọc màn hình) ===== */
-function splitWords(el) {
-  el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
-  (function walk(n) {
-    [...n.childNodes].forEach(c => {
-      if (c.nodeType === 3) {
-        const fr = document.createDocumentFragment();
-        c.textContent.split(/(\s+)/).forEach(t => {
-          if (!t) return;
-          if (/^\s+$/.test(t)) return fr.appendChild(document.createTextNode(" "));
-          const w = document.createElement("span"), i = document.createElement("span");
-          w.className = "w"; w.setAttribute("aria-hidden", "true"); i.textContent = t; w.appendChild(i); fr.appendChild(w);
-        });
-        c.replaceWith(fr);
-      } else if (c.nodeType === 1) walk(c);
-    });
-  })(el);
-}
-
-const code = $("#codebox"), full = code.textContent;
-const mm = gsap.matchMedia();
-
-/* ===== Đầy đủ hiệu ứng: cuộn dọc → trang trôi ngang ===== */
-mm.add("(prefers-reduced-motion: no-preference)", () => {
-  try {
-  document.documentElement.classList.add("fx");
-  const track = $("#track"), ink = $("#ink"), bar = $("#bar");
-  // Đo theo bố cục thật (offsetLeft/offsetWidth không tính transform, khác scrollWidth bị cộng phần đang lệch x:100).
-  // Cuộn tới khi TRANG CUỐI nằm đúng giữa màn hình (không dồn sát trái, không chừa trống bên phải).
-  const dist = () => {
-    const last = track.lastElementChild;
-    return Math.max(0, last.offsetLeft + last.offsetWidth / 2 - document.documentElement.clientWidth / 2);
+  /* ---------- 1. DOM cache ---------- */
+  const root = document.documentElement;
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+  const dom = {
+    world: $("#world"), track: $("#track"), loader: $("#loader"),
+    label: $("#label"), count: $("#count"), bar: $("#bar"), toast: $("#toast"),
+    code: $("#codebox"), hero: $(".hero"), thanks: $(".thanks"), heart: $(".heart"),
+    num: $("#ldNum"), fill: $("#ldFill")
   };
-  const k = () => (innerWidth < 900 ? 1 : 1.15);        // màn nhỏ: cuộn dọc ngắn hơn cho dễ vuốt
-  const len = () => "+=" + Math.round(dist() * k());
-  // Nét mực chỉ "viết" một lần lúc mở trang, không vẽ lại theo từng khung hình cuộn → cuộn mượt
-  const inkTw = ink ? gsap.fromTo(ink, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 3.2, ease: "power2.inOut", paused: true })
-                    : gsap.timeline({ paused: true });   // không có nét mực trong HTML thì bỏ qua
-  const cue = $(".cue");
-  if (cue && matchMedia("(pointer:coarse)").matches) cue.lastChild.textContent = "Vuốt lên, trang sẽ lật sang phải";
+  const pages = $$(".p");
+  const codeFull = dom.code ? dom.code.textContent : "";
+  const noop = () => {};
+  const pad2 = n => String(n).padStart(2, "0");
+  const safe = fn => { try { return fn(); } catch (err) { console.warn("[ktt]", err); } };
 
-  // Chuyển động chính: ghim thế giới, kéo track sang trái theo cuộn dọc
-  const hs = gsap.to(track, {
-    x: () => -dist(), ease: "none",
-    scrollTrigger: {
-      trigger: "#world", start: "top top", end: len, pin: true, scrub: 1,
-      anticipatePin: 1, invalidateOnRefresh: true,
-      onUpdate: self => { bar.style.transform = `scaleX(${self.progress})`; }
+  /* ---------- 2. Thiết bị & mức hiệu năng: high / mid / low ---------- */
+  const touch = matchMedia("(pointer:coarse)").matches;
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const tier = (() => {
+    const cores = navigator.hardwareConcurrency || 4, mem = navigator.deviceMemory || 4, net = navigator.connection || {};
+    if (net.saveData || /2g/.test(net.effectiveType || "") || mem <= 2 || (touch && !ios && cores <= 4)) return "low";
+    return touch || cores <= 4 ? "mid" : "high";
+  })();
+  root.dataset.tier = tier;
+  if (tier === "low") root.classList.add("lowfx");
+
+  /* ---------- 3. State machine ----------
+     LOADING → LOADER_READY → LOADER_EXIT → HERO_INTRO → HERO_READY → SCROLL_ENABLED
+     Section sau Hero chỉ reveal khi allowSectionReveal === true (đặt duy nhất trong finishIntro). */
+  const state = { phase: "LOADING", loaderComplete: false, introComplete: false, allowSectionReveal: false };
+  const setPhase = p => { state.phase = p; root.dataset.phase = p; };
+  const resetState = () => { state.loaderComplete = state.introComplete = state.allowSectionReveal = false; setPhase("LOADING"); };
+
+  /* ---------- 4. Toast + sao chép (không phụ thuộc GSAP) ---------- */
+  let toastTimer = 0;
+  const showToast = msg => {
+    if (!dom.toast) return;
+    dom.toast.querySelector("span").textContent = msg;
+    dom.toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => dom.toast.classList.remove("show"), 1900);
+  };
+  async function copy(text, msg) {
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      try { document.execCommand("copy"); } catch (e) { /* bỏ qua */ }
+      ta.remove();
     }
-  });
-  // Chữ nền trôi chậm hơn nội dung → tạo chiều sâu
-  gsap.to(".rings", { x: () => -dist() * 0.28, ease: "none",
-    scrollTrigger: { trigger: "#world", start: "top top", end: len, scrub: 1.4, invalidateOnRefresh: true } });
+    showToast(msg);
+  }
+  const phoneBtn = $("#phoneBtn"), mailBtn = $("#mailBtn");
+  if (phoneBtn) phoneBtn.addEventListener("click", () => copy("0919951334", "Đã sao chép số điện thoại"));
+  if (mailBtn) mailBtn.addEventListener("click", () => copy("vinhtrandangphuoc@gmail.com", "Đã sao chép email"));
 
-  // Mở màn: một khoảnh khắc duy nhất, có chủ đích
-  splitWords($("#h1"));
-  // ẩn hẳn (không chỉ đẩy lên) để không lộ đuôi chữ "g" của "Đang" qua mép che khi màn đang kéo
-  gsap.set(".hero .w > span", { yPercent: -130, autoAlpha: 0 });
-  gsap.set(".hi", { y: -28 });
+  /* ---------- 5. Vừa chiều cao: không scale, chỉ giảm cỡ chữ/khoảng cách theo mức 0–3 ----------
+     Section ngắn: căn giữa. Section dài: tăng mức thu gọn cho tới khi mọi section vừa viewport. */
+  const fitSections = () => {
+    const world = dom.world;
+    if (!world) return;
+    const H = world.clientHeight;
+    if (!H) return;
+    let lvl = 0;
+    for (; lvl <= 3; lvl++) {
+      root.dataset.fit = String(lvl);
+      if (!pages.some(p => p.offsetHeight > H + 1)) break;
+    }
+    if (lvl > 3) root.dataset.fit = "3";
+  };
 
-  // Trang hiện tại: nhãn chương, số trang, tông nền đổi dần theo từng chương
-  const root = document.documentElement, pages = $$(".p");
+  /* ---------- Tách chữ ---------- */
+  function splitWords(el) {
+    if (!el || el.dataset.split) return;
+    el.dataset.split = "1";
+    el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
+    (function walk(n) {
+      Array.from(n.childNodes).forEach(c => {
+        if (c.nodeType === 3) {
+          const fr = document.createDocumentFragment();
+          c.textContent.split(/(\s+)/).forEach(t => {
+            if (!t) return;
+            if (/^\s+$/.test(t)) return fr.appendChild(document.createTextNode(" "));
+            const w = document.createElement("span"), i = document.createElement("span");
+            w.className = "w"; w.setAttribute("aria-hidden", "true"); i.textContent = t; w.appendChild(i); fr.appendChild(w);
+          });
+          c.replaceWith(fr);
+        } else if (c.nodeType === 1) walk(c);
+      });
+    })(el);
+  }
+
+  /* ---------- 6. Trang, nhãn chương, màu nền theo chương ---------- */
   const tones = [
     ["Mở đầu", "#dfeaf3", "#f5e6ea"], ["Lời mở", "#e8eef5", "#f3ebe3"],
     ["Chương I ·", "#e3edf5", "#e9f0e6"], ["Chương II ·", "#dbe6f2", "#f2e4e8"],
     ["Chương III ·", "#d8e4ee", "#e4e8f3"], ["Chương IV ·", "#f1e4e8", "#e3ecf4"],
-    ["Nhìn về", "#e6eef5", "#f5e8e2"], ["Chương cuối", "#f4e3e8", "#dfe9f2"], ["Cảm ơn", "#f4e3e8", "#dfe9f2"]
+    ["Nhìn về", "#e6eef5", "#f5e8e2"], ["Chương cuối", "#f6e6df", "#f2e1e7"], ["Cảm ơn", "#f7e8df", "#f3e2e6"]
   ];
-  gsap.set(root, { "--w1": tones[0][1], "--w2": tones[0][2] });
-  const setPage = p => {
-    $("#label").textContent = p.dataset.label;
-    $("#count").textContent = String(pages.indexOf(p) + 1).padStart(2, "0") + " / " + String(pages.length).padStart(2, "0");
-    const t = tones.find(t => p.dataset.label.startsWith(t[0]));
-    if (t) gsap.to(root, { "--w1": t[1], "--w2": t[2], duration: 1.6, ease: "power2.out", overwrite: "auto" });
+  let current = -1;
+  const setPage = (i, dur) => {
+    if (i === current || !pages[i]) return;
+    current = i;
+    const name = pages[i].dataset.label || "";
+    if (dom.label && name) dom.label.textContent = name;
+    if (dom.count) dom.count.textContent = pad2(i + 1) + " / " + pad2(pages.length);
+    const t = tones.find(t => name.startsWith(t[0]));
+    if (!t) return;
+    if (dur > 0 && window.gsap) gsap.to(root, { "--w1": t[1], "--w2": t[2], duration: dur, ease: "power2.out", overwrite: "auto" });
+    else { root.style.setProperty("--w1", t[1]); root.style.setProperty("--w2", t[2]); }
   };
-  setPage(pages[0]);
 
-  // Phần mở đầu: các mục rơi xuống lần lượt từ trên xuống (chạy sau khi nền và các đường cong đã hiện)
-  const intro = () => gsap.timeline({ defaults: { ease: "power3.out" } })
-    .to(".kick", { opacity: 1, y: 0, duration: 0.8 })
-    .to(".hero .w > span", { yPercent: 0, autoAlpha: 1, duration: 1, stagger: 0.08 }, "-=0.5")
-    .to([".sub", ".by", ".cue"], { opacity: 1, y: 0, duration: 0.9, stagger: 0.15 }, "-=0.6")
-    .add(() => inkTw.play(), 0.4);
-
-  /* ===== Loader tự chạy: trang tựa như một tờ giấy → chữ hiện trên trang → nét mực chạy ngang
-     → hai mép trang mở ra ở giữa → chỉ còn nền trơn → đường cong / hiệu ứng nền hiện dần → nội dung hiện dần ===== */
-  // mỗi mục có 2 bản (nửa trái, nửa phải) nên luôn chọn cả hai và chạy đồng bộ
-  const pgName = $$(".pg-name"), pgRuleT = $$(".pg-rule.t"), pgRuleB = $$(".pg-rule.b"),
-        pgL1 = $$(".pg-title .l1 > span"), pgL2 = $$(".pg-title .l2 > span"),
-        pgYear = $$(".pg-year"), pgInk = $$(".pg-ink path"), pgL = $(".pg-l"), pgR = $(".pg-r");
-  let started = false;
-
-  const startLoader = () => {
-    if (started) return; started = true;
-    if (!root.classList.contains("ld")) { intro(); return; }   // mạng chậm: loader đã bị gỡ, hiện nội dung ngay
-    root.classList.add("ldgo");
-    const HOLD = 0.53242;   // <<< CHỈNH Ở ĐÂY: số giây chờ sau khi chữ hiện hết rồi mới mở hai mép trang (nhỏ hơn = mở nhanh hơn)
-    const rise = { yPercent: 130, autoAlpha: 0 };               // ẩn hẳn, không lộ đuôi chữ "g" của "Đang"
-    gsap.timeline({ defaults: { ease: "power3.out" } })
-      // 1) Tên
-      .fromTo(pgName, { autoAlpha: 0, y: 10, letterSpacing: "0.7em" }, { autoAlpha: 1, y: 0, letterSpacing: "0.42em", duration: 1.1 }, 0.4)
-      // 2) Đường kẻ trên → tiêu đề → đường kẻ dưới → năm
-      .fromTo(pgRuleT, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 1, ease: "power2.inOut" }, "-=0.5")
-      .fromTo(pgL1, rise, { yPercent: 0, autoAlpha: 1, duration: 1.1 }, "-=0.55")
-      .fromTo(pgL2, rise, { yPercent: 0, autoAlpha: 1, duration: 1.1 }, "-=0.9")
-      .fromTo(pgRuleB, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 1, ease: "power2.inOut" }, "-=0.6")
-      .fromTo(pgYear, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.9 }, "-=0.5")
-      // 3) Một đường mực chạy ngang qua trang, chạy trong lúc chờ và kết thúc đúng lúc trang bắt đầu mở
-      .fromTo(pgInk, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: HOLD + 0.2, ease: "power2.inOut" }, "-=0.2")
-      // 4) Hai mép trang mở ra ở giữa; chữ và nét mực tách đôi theo từng nửa
-      .fromTo([pgL, pgR], { "--sh": 0 }, { "--sh": 1, duration: 0.35, ease: "none" }, ">")
-      .to(pgL, { xPercent: -100, duration: 1.5, ease: "power3.inOut" }, "<")
-      .to(pgR, { xPercent: 100, duration: 1.5, ease: "power3.inOut" }, "<")
-      // 5) Trang đã mở hoàn toàn: nền, các đường cong hiện dần, rồi nội dung hiện dần
-      .add(() => { root.classList.remove("ld"); ScrollTrigger.refresh(); })
-      .add(intro(), ">+1.1");
+  /* ---------- 7. Chế độ tĩnh: reduced-motion hoặc GSAP không tải được ----------
+     Hành trình ngang bằng cuộn ngang gốc (vuốt / bánh xe / thanh cuộn). Nội dung luôn hiển thị. */
+  const staticMode = () => {
+    root.classList.remove("ld", "ldgo", "lock", "fx", "rev");
+    root.classList.add("static");
+    setPhase("STATIC");
+    state.loaderComplete = state.introComplete = state.allowSectionReveal = true;
+    const world = dom.world;
+    if (!world) return noop;
+    let raf = 0, rt = 0, lastW = innerWidth, lastH = innerHeight;
+    const update = () => {
+      raf = 0;
+      const max = Math.max(1, world.scrollWidth - world.clientWidth);
+      let p = world.scrollLeft / max;
+      if (p > .997) p = 1;
+      const mid = world.scrollLeft + world.clientWidth * .6;
+      let i = 0;
+      while (i + 1 < pages.length && pages[i + 1].offsetLeft <= mid) i++;
+      setPage(p === 1 ? pages.length - 1 : i, 0);
+      if (dom.bar) dom.bar.style.transform = "scaleX(" + p + ")";
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    const onWheel = e => {
+      if (e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX) || world.scrollHeight > world.clientHeight + 1) return;
+      world.scrollLeft += e.deltaY * (e.deltaMode === 1 ? 32 : 1);
+      e.preventDefault();
+    };
+    const onResize = () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => {
+        if (Math.abs(innerWidth - lastW) < 24 && Math.abs(innerHeight - lastH) < (touch ? 140 : 24)) return;
+        lastW = innerWidth; lastH = innerHeight; fitSections(); update();
+      }, 220);
+    };
+    world.addEventListener("scroll", onScroll, { passive: true });
+    world.addEventListener("wheel", onWheel, { passive: false });
+    addEventListener("resize", onResize);
+    addEventListener("orientationchange", onResize);
+    fitSections();
+    update();
+    return () => {
+      clearTimeout(rt); cancelAnimationFrame(raf);
+      world.removeEventListener("scroll", onScroll);
+      world.removeEventListener("wheel", onWheel);
+      removeEventListener("resize", onResize);
+      removeEventListener("orientationchange", onResize);
+      root.classList.remove("static");
+    };
   };
-  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then(startLoader);
 
-  // Tiêu đề: từng từ trồi lên khi trang tới (bỏ .rv để không bị tween hai lần)
-  $$(".p:not(.hero) h2").forEach(h => {
-    h.classList.remove("rv"); splitWords(h);
-    const ws = h.querySelectorAll(".w > span");
-    gsap.set(ws, { xPercent: 110, autoAlpha: 0 });
-    gsap.to(ws, { xPercent: 0, autoAlpha: 1, duration: 1.1, stagger: 0.08, ease: "power3.out",
-      scrollTrigger: { trigger: h, containerAnimation: hs, start: "left 85%", once: true } });
-  });
+  /* ---------- 8. Chế độ đầy đủ: GSAP + ScrollTrigger ---------- */
+  const motion = () => {
+    const { world, track } = dom;
+    if (!world || !track || !pages.length) return staticMode();
 
-  // Mỗi trang: nội dung trượt vào theo chiều ngang khi trang tiến tới; nhãn chương đổi theo trang
-  $$(".p").forEach(p => {
-    const items = p.querySelectorAll(".rv");
-    if (items.length) gsap.fromTo(items, { opacity: 0, x: 100 }, {
-      opacity: 1, x: 0, duration: 1.1, stagger: 0.13, ease: "power3.out",
-      scrollTrigger: { trigger: p, containerAnimation: hs, start: "left 82%", once: true, onEnter: () => p.classList.add("on") }
+    const cleanups = [];
+    const on = (t, ev, fn, o) => { t.addEventListener(ev, fn, o); cleanups.push(() => t.removeEventListener(ev, fn, o)); };
+    let dead = false, hs = null, introTl = null, loaderTl = null, watchdog = null, rt = 0;
+    const events = [];                                 /* mốc reveal chạy một lần */
+    const inputEvents = ["wheel", "touchstart", "pointerdown", "keydown"];
+
+    const ts = tier === "low" ? .6 : touch ? .75 : 1;               /* hệ số thời gian loader/intro */
+    const toneDur = tier === "high" ? 1.6 : tier === "mid" ? 1 : 0; /* đổi màu nền theo chương */
+    const dur = touch ? .85 : 1.1;
+    const clamp01 = gsap.utils.clamp(0, 1);
+    const heroI = pages.indexOf(dom.hero);
+
+    /* Đo đạc có cache: chỉ đọc layout khi refresh, không đọc trong vòng lặp animation */
+    let vw = root.clientWidth, D = 0, lefts = [], widths = [];
+    const when = (el, f, fn) => events.push({ el, f, fn, at: 0, done: false });
+    const measure = () => {
+      fitSections();                                   /* có thể đổi layout → đo sau */
+      vw = root.clientWidth;
+      lefts = pages.map(p => p.offsetLeft);
+      widths = pages.map(p => p.offsetWidth);
+      const cs = getComputedStyle(track), padR = parseFloat(cs.paddingRight) || 0;
+      const n = pages.length - 1, lastL = lefts[n], lastR = lastL + widths[n];
+      /* Điểm cuối: section cuối được CĂN GIỮA, nhưng luôn đủ để cạnh phải + lề an toàn (safe-area, breathing room)
+         nằm trọn trong viewport. Cạnh trái vào viewport vì width ≤ --inner (CSS). */
+      D = Math.max(0, lastL + widths[n] / 2 - vw / 2, lastR + padR - vw);
+      trackW = Math.max(1, track.scrollWidth);
+      const tr = track.getBoundingClientRect().left;
+      events.forEach(e => { e.at = e.el.getBoundingClientRect().left - tr; });
+    };
+
+    /* Parallax: một bộ điều khiển duy nhất thay cho hàng chục ScrollTrigger */
+    const parallax = [];
+    /* Parallax CÓ GIỚI HẠN: rings/orbs đung đưa quanh vị trí gốc (sin), bụi lặp tuần hoàn theo bề ngang màn hình.
+       Nhờ vậy nền không bao giờ trôi hẳn ra ngoài và trang không trống dần về cuối. */
+    const addPar = (sel, fn, d) => {
+      const el = $(sel);
+      if (el) parallax.push({ fn, to: d ? gsap.quickTo(el, "x", { duration: d, ease: "power3" }) : gsap.quickSetter(el, "x", "px") });
+    };
+    const sway = (f, a) => x => vw * a * Math.sin(x * f / vw * 1.6);
+    const loop = f => x => -((x * f) % vw);
+    const layers = [[".d1", .18, 2], [".d2", .4, 3], [".d3", .7, 5]];
+    const counts = tier === "high" ? [7, 5, 3] : tier === "mid" ? (innerWidth < 768 ? [3, 2, 1] : [6, 4, 3]) : [0, 0, 0];
+    const dustMoves = tier === "high";
+    const nums = [], setBar = dom.bar ? gsap.quickSetter(dom.bar, "scaleX") : null;
+    const inkEl = $(".ink"), setInk = inkEl ? gsap.quickSetter(inkEl, "scaleX") : null;
+    let trackW = 1;
+    const heroOp = dom.hero && gsap.quickSetter(dom.hero, "opacity"), heroX = dom.hero && gsap.quickSetter(dom.hero, "x", "px");
+    let heroT = -1;
+
+    /* Một hàm cập nhật duy nhất theo tiến trình p (0..1) */
+    const tick = p => {
+      const x = p * D;
+      if (p > .997) p = 1;
+      if (setBar) setBar(p);
+      let i = 0;
+      const mid = x + vw * .6;
+      while (i + 1 < pages.length && lefts[i + 1] <= mid) i++;
+      setPage(p === 1 ? pages.length - 1 : i, toneDur);
+      /* Reveal chỉ khi: Hero đã xong VÀ người dùng thực sự đã cuộn (x > 0) */
+      if (state.allowSectionReveal && x > 1) {
+        for (const e of events) if (!e.done && e.at - x <= vw * e.f) { e.done = true; safe(e.fn); }
+      }
+      for (const o of parallax) o.to(o.fn(x));
+      if (setInk) setInk(clamp01((x + vw) / trackW));
+      for (const n of nums) {
+        const t = (vw - (lefts[n.i] - x)) / (vw + widths[n.i]);
+        if (t > -.1 && t < 1.1) n.set(90 - 180 * clamp01(t));
+      }
+      if (heroOp) {
+        const t = clamp01(1 - (lefts[heroI] + widths[heroI] - x) / (vw * .45));
+        if (t !== heroT) { heroT = t; heroOp(1 - .85 * t); heroX(80 * t); }
+      }
+    };
+
+    /* Bụi: số lượng theo thiết bị (máy yếu: tắt hẳn) */
+    let lastW = innerWidth, lastH = innerHeight, lastLand = innerWidth > innerHeight;
+    const build = () => layers.forEach(([s, f, r], k) => {
+      const g = $(s);
+      if (!g) return;
+      g.textContent = "";
+      const fr = document.createDocumentFragment();
+      for (let i = 0; i < counts[k]; i++) {
+        const z = r * (.6 + Math.random() * .8), x = Math.random() * vw, y = 6 + Math.random() * 88, o = .25 + Math.random() * .35;
+        const rot = Math.random() * 180, line = i % 2;
+        /* Mẫu tuần hoàn chu kỳ = bề ngang màn hình: bản sao ở +vw giúp vòng lặp liền mạch */
+        for (let c = 0; c < (dustMoves ? 2 : 1); c++) {
+          const d = document.createElement("i");
+          d.style.cssText = `left:${x + c * vw}px;top:${y}vh;opacity:${o};` +
+            (line ? `width:${z * 6}px;height:1px;transform:rotate(${rot}deg)` : `width:${z}px;height:${z}px;border-radius:50%`);
+          fr.appendChild(d);
+        }
+      }
+      g.appendChild(fr);
     });
-    ScrollTrigger.create({
-      trigger: p, containerAnimation: hs, start: "left 60%", end: "right 60%",
-      onToggle: s => { if (s.isActive) setPage(p); }
-    });
-  });
+    const hasDust = counts.some(Boolean);
+    let dustW = innerWidth;
+    const onInit = () => {
+      measure();
+      if (hasDust && Math.abs(innerWidth - dustW) > 50) { dustW = innerWidth; build(); }
+    };
 
-  // Bụi sáng nhiều tầng: tầng xa trôi chậm, tầng gần trôi nhanh (chỉ dùng transform nên rất nhẹ)
-  const small = innerWidth < 760;
-  const layers = [[".d1", 0.18, small ? 6 : 10, 2], [".d2", 0.4, small ? 4 : 7, 3], [".d3", 0.7, small ? 3 : 5, 5]];
-  const build = () => layers.forEach(([s, f, n, r]) => {
-    const g = $(s); g.textContent = "";
-    for (let i = 0; i < n; i++) {
-      const d = document.createElement("i"), z = r * (0.6 + Math.random() * 0.8);
-      d.style.cssText = `left:${Math.random() * (innerWidth + dist() * f)}px;top:${6 + Math.random() * 88}vh;opacity:${0.25 + Math.random() * 0.35};` +
-        (i % 2 ? `width:${z * 6}px;height:1px;transform:rotate(${Math.random() * 180}deg)` : `width:${z}px;height:${z}px;border-radius:50%`);
-      g.appendChild(d);
+    /* Dọn dẹp toàn bộ (dùng cho lỗi, đổi chế độ, kết thúc) */
+    const cleanup = () => {
+      dead = true;
+      clearTimeout(rt);
+      inputEvents.forEach(ev => removeEventListener(ev, skip));
+      cleanups.forEach(fn => safe(fn));
+      safe(() => ScrollTrigger.removeEventListener("refreshInit", onInit));
+      safe(() => { if (watchdog) watchdog.kill(); });
+      safe(() => { if (loaderTl) loaderTl.kill(); if (introTl) introTl.kill(); });
+      safe(() => { if (hs) { if (hs.scrollTrigger) hs.scrollTrigger.kill(true); hs.kill(); } });
+      safe(() => gsap.set(".hi, .rv, .hero .w > span, .p h2 .w > span, .hline, .fl, .ld-core *, .ink", { clearProps: "all" }));
+      safe(() => gsap.set([track, ".hero", "#loader"], { clearProps: "all" }));
+      $$(".fl").forEach(n => n.remove());
+      $$(".cnt").forEach(el => { el.textContent = el.dataset.to; });
+      if (dom.code && codeFull) dom.code.textContent = codeFull;
+      root.classList.remove("fx", "ld", "ldgo", "lock", "rev");
+    };
+
+    /* Bỏ qua / tua nhanh khi người dùng chạm, cuộn, nhấn phím trong lúc loader hoặc intro */
+    function skip() {
+      if (state.phase === "HERO_INTRO" && introTl) introTl.timeScale(5);
+      else if (!state.loaderComplete && loaderTl) loaderTl.timeScale(3);
     }
-  });
-  build(); ScrollTrigger.addEventListener("refreshInit", build);
-  layers.forEach(([s, f]) => gsap.to(s, { x: () => -dist() * f, ease: "none",
-    scrollTrigger: { trigger: "#world", start: "top top", end: len, scrub: 1.2, invalidateOnRefresh: true } }));
 
-  // Chiều sâu: số lớp trôi ngược hướng, hero mờ dần khi rời đi, orb trôi ở các tốc độ khác nhau
-  $$(".grade .num").forEach(n => gsap.fromTo(n, { x: 90 }, { x: -90, ease: "none",
-    scrollTrigger: { trigger: n.parentElement, containerAnimation: hs, start: "left right", end: "right left", scrub: true } }));
-  gsap.to(".hero", { opacity: 0.15, x: 80, ease: "none",
-    scrollTrigger: { trigger: ".hero", containerAnimation: hs, start: "right 45%", end: "right 0%", scrub: true } });
-  [[".o1", 0.12], [".o2", 0.5], [".o3", 0.85]].forEach(([s, f]) => gsap.to(s, { x: () => -dist() * f, ease: "none",
-    scrollTrigger: { trigger: "#world", start: "top top", end: len, scrub: 1.6, invalidateOnRefresh: true } }));
+    try {
+      resetState();
+      root.classList.add("fx");
+      setPage(0, 0);
 
-  // Trang cuối: tim bay lên khi tới nơi, và mỗi lần chạm vào tim
-  const th = $(".thanks"), heart = $(".heart"), NS = "http://www.w3.org/2000/svg";
-  const burst = (n = 14) => {
-    for (let i = 0; i < n; i++) {
-      const s = document.createElementNS(NS, "svg"), u = document.createElementNS(NS, "use");
-      s.setAttribute("class", "ic fl"); u.setAttribute("href", "#i-heart"); s.appendChild(u); th.appendChild(s);
-      gsap.set(s, { x: heart.offsetLeft + 10, y: heart.offsetTop + 10, scale: gsap.utils.random(0.6, 1.6), opacity: 1 });
-      gsap.to(s, { x: "+=" + gsap.utils.random(-110, 110), y: "-=" + gsap.utils.random(120, 280), rotate: gsap.utils.random(-40, 40),
-        opacity: 0, duration: gsap.utils.random(1.6, 2.8), delay: i * 0.07, ease: "power2.out", onComplete: () => s.remove() });
+      /* Parallax layers */
+      addPar(".rings", sway(.28, .05), touch ? .5 : .9);
+      if (tier !== "low") [[".o1", .12, .06], [".o2", .5, .12], [".o3", .85, .1]].forEach(([s, f, a]) => addPar(s, sway(f, a), touch ? .7 : 1.1));
+      if (dustMoves) layers.forEach(([s, f]) => addPar(s, loop(f), 0));
+      $$(".grade .num").forEach(n => nums.push({ i: pages.indexOf(n.parentElement), set: gsap.quickSetter(n, "x", "px") }));
+      if (hasDust) build();
+
+      /* --- Reveal: chuẩn bị trạng thái đầu (ẩn theo state + opacity) --- */
+      splitWords($("#h1"));
+      const words = $$(".hero .w > span");
+      gsap.set(words, { yPercent: 115, autoAlpha: 0 });
+      gsap.set(".hero .hi", { autoAlpha: 0, y: 16 });
+      gsap.set(".hline", { scaleX: 0, autoAlpha: 0 });
+      const cue = $(".cue span");
+      if (cue && touch) cue.textContent = "Vuốt lên, trang sẽ lật sang phải";
+
+      /* Tiêu đề chạy từng từ (mask reveal ngang, blur nhẹ trên máy mạnh) */
+      const blur = tier === "high";
+      $$(".p:not(.hero) h2").forEach(h => {
+        h.classList.remove("rv");
+        splitWords(h);
+        const ws = $$(".w > span", h);
+        if (!ws.length) return;
+        gsap.set(ws, blur ? { xPercent: 105, autoAlpha: 0, filter: "blur(4px)" } : { xPercent: 105, autoAlpha: 0 });
+        const to = { xPercent: 0, autoAlpha: 1, duration: dur, stagger: .08, ease: "power3.out" };
+        if (blur) { to.filter = "blur(0px)"; to.clearProps = "filter"; }
+        when(h, .85, () => gsap.to(ws, to));
+      });
+
+      /* Nội dung mỗi trang: thứ bậc theo thứ tự DOM (tiêu đề → đoạn → thành tích → số liệu) */
+      pages.forEach(p => {
+        const items = $$(".rv", p);
+        if (!items.length) return;
+        when(p, .82, () => {
+          p.classList.add("on");
+          gsap.fromTo(items, { autoAlpha: 0, x: 60 }, { autoAlpha: 1, x: 0, duration: dur, stagger: .11, ease: "power3.out" });
+        });
+      });
+
+      /* Đếm số: chạy một lần, không reset khi refresh */
+      $$(".cnt").forEach(el => {
+        const to = +el.dataset.to, o = { n: 0 };
+        el.textContent = "0";
+        when(el, .85, () => gsap.to(o, { n: to, duration: touch ? 1.1 : 1.6, delay: .3, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(o.n); } }));
+      });
+
+      /* Gõ code */
+      if (dom.code && codeFull) {
+        dom.code.textContent = "";
+        const typed = { n: 0 };
+        let shown = -1;
+        when(dom.code, .75, () => gsap.to(typed, {
+          n: codeFull.length, duration: touch ? 1.4 : 2, ease: "none", delay: .4,
+          onUpdate: () => { const n = Math.round(typed.n); if (n !== shown) { shown = n; dom.code.textContent = codeFull.slice(0, n) + "▍"; } },
+          onComplete: () => { dom.code.textContent = codeFull; }
+        }));
+      }
+
+      /* Trái tim */
+      const NS = "http://www.w3.org/2000/svg";
+      const burst = (n = touch ? 8 : 14) => {
+        const th = dom.thanks, heart = dom.heart;
+        if (!th || !heart || th.querySelectorAll(".fl").length > 40) return;
+        const hx = heart.getBoundingClientRect(), tr = th.getBoundingClientRect();
+        for (let i = 0; i < n; i++) {
+          const s = document.createElementNS(NS, "svg"), u = document.createElementNS(NS, "use");
+          s.setAttribute("class", "ic fl"); u.setAttribute("href", "#i-heart"); s.appendChild(u); th.appendChild(s);
+          gsap.set(s, { x: hx.left - tr.left + 10, y: hx.top - tr.top + 10, scale: gsap.utils.random(.6, 1.6), opacity: 1 });
+          gsap.to(s, { x: "+=" + gsap.utils.random(-110, 110), y: "-=" + gsap.utils.random(120, 280), rotate: gsap.utils.random(-40, 40),
+            opacity: 0, duration: gsap.utils.random(1.6, 2.8), delay: i * .07, ease: "power2.out", onComplete: () => s.remove() });
+        }
+      };
+      if (dom.heart && dom.thanks) {
+        when(dom.thanks, .6, () => gsap.delayedCall(1.1, () => burst()));
+        on(dom.heart, "click", () => burst(touch ? 6 : 10));
+      }
+
+      /* --- Đo trước khi tạo controller --- */
+      ScrollTrigger.addEventListener("refreshInit", onInit);
+      measure();
+
+      /* --- Controller ngang duy nhất: pin #world, cuộn dọc → track dịch ngang --- */
+      hs = gsap.to(track, {
+        x: () => -D, ease: "none",
+        scrollTrigger: {
+          trigger: world, start: "top top", end: () => "+=" + Math.max(1, Math.round(D * (innerWidth < 900 ? 1 : 1.15))),
+          pin: true, scrub: tier === "low" ? true : touch ? .3 : .9,
+          anticipatePin: touch ? 0 : 1, fastScrollEnd: touch, invalidateOnRefresh: true
+        },
+        onUpdate() { tick(this.progress()); }
+      });
+      const st = hs.scrollTrigger;
+
+      /* Bàn phím: Tab tới phần tử ngoài màn hình → đưa đúng trang vào giữa viewport */
+      const keepLeft = () => { if (world.scrollLeft) world.scrollLeft = 0; };
+      on(world, "scroll", keepLeft, { passive: true });
+      on(track, "focusin", e => {
+        const i = pages.indexOf(e.target.closest && e.target.closest(".p"));
+        if (i < 0 || !D) return;
+        keepLeft();
+        const target = Math.min(D, Math.max(0, lefts[i] + widths[i] / 2 - vw / 2));
+        if (Math.abs(target - st.progress * D) < vw * .12) return;
+        scrollTo({ top: st.start + (target / D) * (st.end - st.start), behavior: "auto" });
+      });
+
+      /* --- Hero intro: metadata → nét nhỏ → 2 dòng tiêu đề → phụ đề → tác giả → gợi ý cuộn --- */
+      const finishIntro = () => {
+        if (state.introComplete) return;
+        state.introComplete = true;
+        setPhase("HERO_READY");
+        inputEvents.forEach(ev => removeEventListener(ev, skip));
+        if (introTl) introTl.timeScale(1);
+        root.classList.remove("lock");
+        state.allowSectionReveal = true;                 /* chỉ tới đây section 2 mới được phép reveal */
+        root.classList.add("rev");
+        setPhase("SCROLL_ENABLED");
+        ScrollTrigger.refresh();                         /* đo lại sau khi mở khóa cuộn (thanh cuộn desktop) */
+        tick(hs.progress());
+      };
+      introTl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" }, onComplete: finishIntro })
+        .to(".kick", { autoAlpha: 1, y: 0, duration: .7 * ts })
+        .to(".hline", { scaleX: 1, autoAlpha: 1, duration: .7 * ts, ease: "power2.inOut" }, "-=" + .45 * ts)
+        .to(words, { yPercent: 0, autoAlpha: 1, duration: .95 * ts, stagger: .09 * ts }, "-=" + .3 * ts)
+        .to(".sub", { autoAlpha: 1, y: 0, duration: .8 * ts }, "-=" + .45 * ts)
+        .to(".by", { autoAlpha: 1, y: 0, duration: .8 * ts }, "-=" + .55 * ts)
+        .to(".cue", { autoAlpha: 1, y: 0, duration: .8 * ts }, "-=" + .45 * ts);
+      const startIntro = () => {
+        state.loaderComplete = true;
+        setPhase("HERO_INTRO");
+        introTl.play(0);
+      };
+
+      /* --- Loader mới: điểm → nét → TV/TRẦN VINH → tiêu đề → 00…100 → nét quét → mở màn clip-path --- */
+      const runLoader = () => {
+        if (dead) return;
+        if (!root.classList.contains("ld") || !dom.loader) { startIntro(); return; }
+        root.classList.add("ldgo", "lock");
+        setPhase("LOADER_READY");
+        inputEvents.forEach(ev => addEventListener(ev, skip, { passive: true }));
+        const L = s => $$(s, dom.loader), t = v => v * ts, counter = { n: 0 };
+        loaderTl = gsap.timeline({ defaults: { ease: "power2.out" } })
+          .fromTo(L(".ld-dot"), { scale: 0 }, { scale: 1, duration: t(.3) }, 0)
+          .fromTo(L(".ld-v"), { scaleY: 0 }, { scaleY: 1, duration: t(.4), ease: "power2.inOut" }, t(.15))
+          .fromTo(L(".ld-mono, .ld-name"), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: t(.45), stagger: t(.12) }, t(.4))
+          .fromTo(L(".ld-h"), { scaleX: 0 }, { scaleX: 1, duration: t(.5), ease: "power2.inOut" }, t(.55))
+          .fromTo(L(".ld-title .l1 > span"), { yPercent: 115 }, { yPercent: 0, duration: t(.65) }, t(.7))
+          .fromTo(L(".ld-title .l2 > span"), { yPercent: 115 }, { yPercent: 0, duration: t(.65) }, t(.82))
+          .to(counter, {
+            n: 100, duration: t(1.4), ease: "power1.inOut",
+            onUpdate: () => {
+              if (dom.num) dom.num.textContent = pad2(Math.round(counter.n));
+              if (dom.fill) dom.fill.style.transform = "scaleX(" + counter.n / 100 + ")";
+            }
+          }, t(.15))
+          .fromTo(L(".ld-sweep"), { xPercent: -100, autoAlpha: 1 }, { xPercent: 100, duration: t(.55), ease: "power2.inOut" }, t(1.25))
+          .add(() => setPhase("LOADER_EXIT"), t(1.7))
+          .to(L(".ld-core"), { y: -24, autoAlpha: 0, duration: t(.35), ease: "power2.in" }, t(1.7))
+          .fromTo(dom.loader, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: t(.6), ease: "power3.inOut" }, t(1.75))
+          .add(() => { state.loaderComplete = true; root.classList.remove("ld"); startIntro(); }, t(2.35));
+      };
+
+      /* Cổng khởi động: chờ font (tối đa 900ms) → đo lại → loader. Không bao giờ kẹt vì có timeout. */
+      Promise.race([document.fonts ? document.fonts.ready : 0, new Promise(r => setTimeout(r, 900))]).then(() => {
+        if (dead) return;
+        ScrollTrigger.refresh();
+        runLoader();
+      });
+
+      /* Chốt an toàn: nếu chuỗi loader/intro không kết thúc sau 10s thì hoàn tất cưỡng bức, nội dung không bao giờ bị khóa */
+      watchdog = gsap.delayedCall(10, () => {
+        if (state.introComplete) return;
+        safe(() => { if (loaderTl) loaderTl.kill(); if (introTl) introTl.kill(); });
+        gsap.set([".hero .hi", ".hline", words], { autoAlpha: 1, y: 0, yPercent: 0, scaleX: 1 });
+        state.loaderComplete = true;
+        root.classList.remove("ld");
+        finishIntro();
+      });
+
+      /* Font tải muộn → refresh có kiểm soát (gộp, debounce) */
+      const soft = () => { clearTimeout(rt); rt = setTimeout(() => { if (!dead) ScrollTrigger.refresh(); }, 160); };
+      if (document.fonts) { document.fonts.ready.then(soft); on(document.fonts, "loadingdone", soft); }
+
+      /* Resize / xoay màn hình: chỉ refresh khi thay đổi đáng kể (thanh địa chỉ mobile không tính) */
+      const onResize = () => {
+        clearTimeout(rt);
+        rt = setTimeout(() => {
+          if (dead) return;
+          const w = innerWidth, h = innerHeight, land = w > h;
+          if (Math.abs(w - lastW) < 24 && Math.abs(h - lastH) < (touch ? 140 : 24) && land === lastLand) return;
+          lastW = w; lastH = h; lastLand = land;
+          ScrollTrigger.refresh();
+        }, 220);
+      };
+      on(window, "resize", onResize);
+      on(window, "orientationchange", onResize);
+
+      tick(hs.progress());
+      return cleanup;
+    } catch (err) {
+      console.error(err);
+      cleanup();
+      return staticMode();
     }
   };
-  ScrollTrigger.create({ trigger: heart, containerAnimation: hs, start: "left 70%", once: true, onEnter: () => setTimeout(burst, 900) });
-  heart.addEventListener("click", () => burst(10));
 
-  // Con số đếm lên khi trang tới
-  $$(".cnt").forEach(el => {
-    const to = +el.dataset.to, o = { n: 0 };
-    el.textContent = "0";
-    ScrollTrigger.create({ trigger: el, containerAnimation: hs, start: "left 85%", once: true,
-      onEnter: () => gsap.to(o, { n: to, duration: 1.6, delay: 0.3, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(o.n); } }) });
+  /* ---------- 9. Khởi động: GSAP từ CDN chính → CDN dự phòng → chế độ tĩnh ---------- */
+  const ready = () => !!(window.gsap && window.ScrollTrigger);
+  const loadScript = src => new Promise((ok, no) => {
+    const s = document.createElement("script");
+    s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s);
   });
+  const FALLBACK = [
+    "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"
+  ];
+  const withGsap = () => ready() ? Promise.resolve(true) : Promise.race([
+    FALLBACK.reduce((p, src) => p.then(() => loadScript(src)), Promise.resolve()).then(ready, () => false),
+    new Promise(r => setTimeout(() => r(false), 3500))
+  ]);
 
-  // Gõ code khi trang Tin học tới gần
-  code.textContent = "";
-  const typed = { n: 0 }; let shown = -1;
-  ScrollTrigger.create({
-    trigger: code, containerAnimation: hs, start: "left 75%", once: true,
-    onEnter: () => gsap.to(typed, { n: full.length, duration: 2.2, ease: "none", delay: 0.5,
-      onUpdate: () => { const n = Math.round(typed.n); if (n !== shown) { shown = n; code.textContent = full.slice(0, n) + "▍"; } },
-      onComplete: () => (code.textContent = full) })
-  });
+  const boot = () => {
+    gsap.registerPlugin(ScrollTrigger);
+    /* Không để ScrollTrigger tự refresh theo resize: ta tự xử lý (debounce + ngưỡng) để Safari mobile không giật */
+    ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: "visibilitychange,DOMContentLoaded,load" });
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", motion);
+    mm.add("(prefers-reduced-motion: reduce)", staticMode);
+  };
 
-  return () => { document.documentElement.classList.remove("fx"); document.documentElement.classList.remove("ld"); };
-  } catch (err) {
-    // Có lỗi bất ngờ: bỏ lớp phủ + chế độ ghim để trang vẫn hiện và cuộn ngang được
-    console.error(err);
-    document.documentElement.classList.remove("fx", "ld");
-    gsap.set([".hi", ".rv", ".hero .w > span", ".p h2 .w > span"], { clearProps: "all" });
-  }
-});
-
-/* ===== Giảm chuyển động: không ghim, trang cuộn ngang tự nhiên bằng tay ===== */
-mm.add("(prefers-reduced-motion: reduce)", () => { code.textContent = full; });
-
-addEventListener("load", () => ScrollTrigger.refresh());
-document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+  withGsap().then(ok => (ok ? boot() : staticMode())).catch(() => staticMode());
+})();

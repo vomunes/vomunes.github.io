@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <meta name="description" content="Portfolio của Trần Đặng Phước Vinh — Khi Tuổi Trẻ Còn Đang Viết.">
 <meta name="theme-color" content="#f8f9f6">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23dce8f0' stroke='%232b5b86'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='%232b5b86' font-family='serif'%3ETV%3C/text%3E%3C/svg%3E">
@@ -12,39 +13,41 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script>
-if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
-  document.documentElement.classList.add("ld");
-  /* chỉ gỡ loader nếu GSAP không tải được (mất mạng...) hoặc có sự cố bất ngờ */
-  addEventListener("load",()=>{ if(!window.gsap||!window.ScrollTrigger) document.documentElement.classList.remove("ld"); });
-  /* nếu sau 6 giây loader vẫn chưa chạy (script lỗi / tải quá chậm) thì gỡ để khách vào được web */
-  setTimeout(()=>{ if(!document.documentElement.classList.contains("ldgo")) document.documentElement.classList.remove("ld"); },6000);
-  setTimeout(()=>document.documentElement.classList.remove("ld"),30000);
-}
+/* Bật loader chỉ khi có JS và không bật reduced-motion.
+   Chốt an toàn: nếu script chính không khởi động được loader sau 7s thì mở trang. */
+(function () {
+  var h = document.documentElement;
+  h.classList.add("js");
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  h.classList.add("ld");
+  setTimeout(function () { if (!h.classList.contains("ldgo")) h.classList.remove("ld"); }, 7000);
+})();
 </script>
 </head>
 <body>
- <div class="loader" id="loader" aria-hidden="true">
-  <!-- Trang tựa: hai nửa trang giống hệt nhau, ghép lại thành một tờ giấy; hai mép mở ra ở giữa -->
-  <div class="pg-half pg-l"><div class="pg-sheet">
-      <div class="pg-content">
-        <p class="pg-name">TRẦN VINH</p>
-        <i class="pg-rule t"></i>
-        <h2 class="pg-title"><span class="ln l1"><span>Khi Tuổi Trẻ</span></span><span class="ln l2"><span><em>Còn Đang Viết</em></span></span></h2>
-        <i class="pg-rule b"></i>
-        <p class="pg-year">2026</p>
-      </div>
-     </div></div>
-  <div class="pg-half pg-r"><div class="pg-sheet">
-      <div class="pg-content">
-        <p class="pg-name">TRẦN VINH</p>
-        <i class="pg-rule t"></i>
-        <h2 class="pg-title"><span class="ln l1"><span>Khi Tuổi Trẻ</span></span><span class="ln l2"><span><em>Còn Đang Viết</em></span></span></h2>
-        <i class="pg-rule b"></i>
-        <p class="pg-year">2026</p>
-      </div>
-      </div></div>
+<a href="#world" class="skip-link">Chuyển đến nội dung chính</a>
+
+<noscript>
+  <p class="nojs">Bật JavaScript để có trải nghiệm đầy đủ. Bạn vẫn có thể cuộn ngang để đọc toàn bộ nội dung.</p>
+</noscript>
+
+<!-- Loader mới: điểm → nét mảnh → tên → tiêu đề → tiến trình → nét quét → mở màn bằng clip-path -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="ld-core">
+    <i class="ld-dot"></i>
+    <i class="ld-v"></i>
+    <p class="ld-mono">TV</p>
+    <p class="ld-name">TRẦN VINH</p>
+    <i class="ld-h"></i>
+    <h2 class="ld-title"><span class="ln l1"><span>Khi Tuổi Trẻ</span></span><span class="ln l2"><span><em>Còn Đang Viết</em></span></span></h2>
+  </div>
+  <div class="ld-foot">
+    <span class="ld-num" id="ldNum">00</span>
+    <span class="ld-rail"><i class="ld-fill" id="ldFill"></i><i class="ld-sweep"></i></span>
+  </div>
 </div>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
   <symbol id="i-fb" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></symbol>
@@ -53,31 +56,29 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
 </svg>
 
-<header class="top">
+<header class="top" role="banner">
   <span class="brand"><b>TV</b><span>Phước Vinh</span></span>
-  <span class="label" id="label">Mở đầu</span>
+  <span class="label" id="label" aria-live="polite">Mở đầu</span>
   <span class="count" id="count">01 / 17</span>
-  <i class="bar" id="bar"></i>
+  <i class="bar" id="bar" aria-hidden="true"></i>
 </header>
 
 <div class="rings" aria-hidden="true"><svg viewBox="-200 -200 400 400"><g fill="none" stroke="currentColor" stroke-width=".8"><circle r="26"/><circle cx="3" r="48"/><circle cx="6" r="72"/><circle cx="9" r="96" stroke-dasharray="2 5"/><circle cx="12" r="120"/><circle cx="14" r="144"/><circle cx="16" r="168" stroke-dasharray="1 6"/><circle cx="18" r="192"/></g></svg></div>
 <div class="dust" aria-hidden="true"><div class="d1"></div><div class="d2"></div><div class="d3"></div></div>
 <i class="orb o1" aria-hidden="true"></i><i class="orb o2" aria-hidden="true"></i><i class="orb o3" aria-hidden="true"></i>
 
-<main id="world">
+<main id="world" tabindex="-1" aria-label="Nội dung chính">
   <div class="track" id="track">
-    <svg class="ink" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
-   </svg>
+    <i class="ink" aria-hidden="true"></i>
 
-    <!-- 1. Mở đầu -->
     <section class="p hero" data-label="Mở đầu">
       <p class="kick hi">Portfolio cá nhân · 2026</p>
+      <i class="hline" aria-hidden="true"></i>
       <h1 id="h1">Khi Tuổi Trẻ<br><em>Còn Đang Viết</em></h1>
       <p class="sub hi">Một hành trình của những ngày tháng đang lớn lên.</p>
       <p class="by hi">Trần Đặng Phước Vinh</p>
     </section>
 
-    <!-- 2. Lời mở -->
     <section class="p wide" data-label="Lời mở">
       <p class="eyebrow rv">Lời mở</p>
       <h2 class="rv">Có những câu chuyện chỉ bắt đầu khi ta dám bước đi.</h2>
@@ -85,7 +86,6 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <p class="rv">Cuốn sách này là cách tôi lưu lại những điều đã đi qua: những cuộc thi, những bài toán, những lần thất bại, những lần cố gắng, và cả những điều tôi vẫn chưa biết.</p>
     </section>
 
-    <!-- 3. Giới thiệu -->
     <section class="p about" data-label="Chương I · Giới thiệu">
       <p class="eyebrow rv">Chương I</p>
       <h2 class="rv">Người đang viết câu chuyện của mình.</h2>
@@ -105,7 +105,6 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <blockquote class="rv">“Mỗi trang giấy là một bước tiến về phía trước.”</blockquote>
     </section>
 
-    <!-- 4. Dấu mốc -->
     <section class="p intro" data-label="Chương II · Dấu mốc">
       <p class="eyebrow rv">Chương II</p>
       <h2 class="rv">Năm tháng, từng trang một.</h2>
@@ -161,12 +160,11 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <p class="note rv"><strong>Chương tiếp theo chưa được viết.</strong> Và có lẽ đó là điều thú vị nhất của một hành trình.</p>
     </section>
 
-    <!-- Những con số -->
     <section class="p vals stats" data-label="Chương II · Những con số">
       <p class="eyebrow rv">Nhìn lại</p>
       <h2 class="rv">Vài con số nhỏ trên chặng đường.</h2>
       <ul>
-        <li class="rv"><b class="cnt" data-to="12">12</b><p>thành tích từ lớp 8 đến lớp 11</p></li>
+        <li class="rv"><b class="cnt" data-to="13">13</b><p>thành tích từ lớp 8 đến lớp 12</p></li>
         <li class="rv"><b class="cnt" data-to="5">5</b><p>năm học, từ lớp 8 đến lớp 12</p></li>
         <li class="rv"><b class="cnt" data-to="1">1</b><p>sở trường đi cùng tôi: Tin học</p></li>
       </ul>
@@ -179,11 +177,10 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <p class="note rv">Thành tích là một dấu mốc. Điều quan trọng hơn là những gì đã học được trên đường đi.</p>
     </section>
 
-    <!-- 5. Tin học -->
     <section class="p code" data-label="Chương III · Tin học">
       <p class="eyebrow rv">Chương III</p>
       <h2 class="rv">Không chỉ là những dòng code.</h2>
-      <pre class="codebox rv" id="codebox">while (đang_học) {
+      <pre class="codebox rv" id="codebox" tabindex="0" aria-label="Đoạn mã minh họa">while (đang_học) {
   thử();
   nếu (sai) sửa();
 }</pre>
@@ -191,7 +188,6 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <p class="rv">Những bài toán thuật toán dạy tôi sự kiên nhẫn. Một chương trình sai không có nghĩa là thất bại; đôi khi nó chỉ cho biết rằng mình cần nhìn vấn đề từ một góc khác.</p>
     </section>
 
-    <!-- 6. Điều trân trọng -->
     <section class="p vals" data-label="Chương IV · Điều tôi trân trọng">
       <p class="eyebrow rv">Chương IV</p>
       <h2 class="rv">Ba điều tôi mang theo trên đường.</h2>
@@ -202,7 +198,6 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       </ul>
     </section>
 
-    <!-- 7. Phía trước -->
     <section class="p wide" data-label="Nhìn về phía trước">
       <p class="eyebrow rv">Phần kết</p>
       <h2 class="rv">Tôi vẫn đang viết tiếp.</h2>
@@ -211,21 +206,19 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
       <p class="sign rv">Trần Đặng Phước Vinh</p>
     </section>
 
-    <!-- 8. Liên hệ -->
     <section class="p contact" data-label="Chương cuối · Liên hệ">
       <p class="eyebrow rv">Chương cuối</p>
       <h2 class="rv">Hãy để lại một lời nhắn.</h2>
       <p class="rv">Một cuốn sách có thể khép lại, nhưng một cuộc trò chuyện có thể mở ra một chương hoàn toàn mới.</p>
-      <div class="icons rv">
-        <button id="phoneBtn" aria-label="Sao chép số điện thoại"><svg class="ic"><use href="#i-phone"/></svg></button>
-        <button id="mailBtn" aria-label="Sao chép email"><svg class="ic"><use href="#i-mail"/></svg></button>
-        <a href="https://www.facebook.com/anhlavinhdepzai" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg class="ic"><use href="#i-fb"/></svg></a>
-        <a href="https://www.tiktok.com/@trandangphuocvinh" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg class="ic"><use href="#i-tt"/></svg></a>
-        <a href="https://locket.cam/ph.vinh" target="_blank" rel="noopener noreferrer" aria-label="Locket"><svg class="ic"><use href="#i-heart"/></svg></a>
-      </div>
+      <nav class="icons rv" aria-label="Liên hệ mạng xã hội">
+        <button type="button" id="phoneBtn" aria-label="Sao chép số điện thoại" title="Sao chép số điện thoại"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg></button>
+        <button type="button" id="mailBtn" aria-label="Sao chép email" title="Sao chép email"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></button>
+        <a href="https://www.facebook.com/anhlavinhdepzai" target="_blank" rel="noopener noreferrer" aria-label="Trang Facebook cá nhân" title="Facebook"><svg class="ic" aria-hidden="true"><use href="#i-fb"/></svg></a>
+        <a href="https://www.tiktok.com/@trandangphuocvinh" target="_blank" rel="noopener noreferrer" aria-label="Kênh TikTok" title="TikTok"><svg class="ic" aria-hidden="true"><use href="#i-tt"/></svg></a>
+        <a href="https://locket.cam/ph.vinh" target="_blank" rel="noopener noreferrer" aria-label="Tài khoản Locket" title="Locket"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></a>
+      </nav>
     </section>
 
-    <!-- 9. Cảm ơn -->
     <section class="p thanks" data-label="Cảm ơn">
       <p class="rv">Cảm ơn vì bạn đã dành thời gian để đi cùng hành trình của tôi.</p>
       <svg class="ic heart rv" aria-hidden="true"><use href="#i-heart"/></svg>
@@ -234,7 +227,7 @@ if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
   </div>
 </main>
 
-<div class="toast" id="toast" role="status" aria-live="polite"><svg class="ic"><use href="#i-check"/></svg><span></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span></span></div>
 
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
