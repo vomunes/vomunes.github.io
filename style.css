@@ -1,8 +1,9 @@
 /* Khi Tuổi Trẻ Còn Đang Viết — style.css
    Nguyên tắc: nội dung > dễ đọc > hiệu năng > chuyển động > trang trí.
    Mặc định (không JS / không GSAP): #world là cuộn ngang gốc của trình duyệt.
-   .fx   = chế độ GSAP (cuộn dọc → ngang, #world được pin)
-   .static = chế độ tĩnh (reduced-motion hoặc GSAP lỗi)               */
+   .fx   = chế độ GSAP (desktop: cuộn dọc → ngang, #world được pin)
+   .static = chế độ tĩnh (điện thoại/tablet, reduced-motion hoặc GSAP lỗi): cuộn ngang gốc
+   .mob  = reveal nhẹ bằng IntersectionObserver trong chế độ .static           */
 
 /* ===================== 1. Tokens ===================== */
 :root {
@@ -65,7 +66,7 @@ h2 {
   line-height: 1.14; letter-spacing: -.02em; margin-bottom: calc(.55em * var(--sp)); text-wrap: balance;
 }
 @supports (height: 1svh) { h2 { font-size: calc(clamp(24px, min(6vw, 8.4svh), 64px) * var(--fit)); } }
-p { max-width: 75ch; }
+p { max-width: 75ch; text-wrap: pretty; }
 p + p { margin-top: calc(1em * var(--sp)); }
 strong { font-weight: 500; color: var(--b); position: relative; }
 strong::after {
@@ -111,7 +112,7 @@ body::after {
 .top, .rings, .dust, .orb { transition: opacity 1.2s ease; }
 .ld .top, .ld .rings, .ld .dust, .ld .orb { opacity: 0; }
 
-/* ===================== 4. Loader mới ===================== */
+/* ===================== 4. Loader (chỉ desktop) ===================== */
 .loader {
   position: fixed; inset: 0; z-index: 9999; display: none; overflow: hidden; touch-action: none;
   background: radial-gradient(70vmax 70vmax at 50% 40%, rgba(255, 255, 255, .85), transparent 70%), var(--bg);
@@ -162,7 +163,7 @@ body::after {
 /* ===================== 6. Hành trình ngang ===================== */
 #world { overflow: auto; height: var(--vh); outline: none; }
 .fx #world { overflow: hidden; }
-.static #world { overflow: auto; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+.static #world { overflow: auto; scroll-snap-type: x proximity; overscroll-behavior: contain; }
 .static .p { scroll-snap-align: center; }
 
 .track {
@@ -415,10 +416,50 @@ blockquote { margin-top: calc(44px * var(--sp)); font: italic 400 calc(clamp(20p
 .lowfx .dust, .lowfx .o2, .lowfx .o3, .lowfx body::after { display: none; }
 .lowfx .rings svg { animation: none; opacity: .05; }
 
-/* ===================== 10. Reduced motion ===================== */
+/* ===================== 10. Chế độ tĩnh / mobile (.static, .mob) ===================== */
+/* Chiều cao #world = svh (không đổi khi thanh địa chỉ co giãn) nên đáy luôn khớp vùng nhìn thấy */
+.static #world { height: 100vh; height: 100svh; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
+
+/* Đệm cuối đường cuộn: cạnh phải của section cuối luôn nằm trọn trong viewport */
+.static .track { padding-right: calc(var(--padR) + 6vw); }
+
+/* Màn kết "The End": đủ khoảng thở trên/dưới + safe-area (vùng cử chỉ home) */
+.static .thanks {
+  justify-content: center;
+  padding-top: var(--hdr);
+  padding-bottom: calc(var(--padB) + var(--sb) + 24px);
+  scroll-snap-align: end;
+}
+.static .thanks::before {
+  content: ""; width: 48px; height: 1px; flex: none;
+  background: linear-gradient(90deg, var(--b), var(--rose));
+}
+.static .thanks p { text-wrap: balance; }
+.static .codebox { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Reveal nhẹ bằng IntersectionObserver (chỉ khi script đã bật .mob; lỗi JS thì nội dung vẫn hiện) */
+.mob .rv {
+  opacity: 0; transform: translate3d(18px, 0, 0);
+  transition: opacity .7s ease, transform .7s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.mob .rv.in { opacity: 1; transform: none; }
+.mob .thanks .heart.rv { transition-delay: .5s; }
+.mob .thanks small.rv { transition-delay: .9s; }
+
+@media (max-width: 480px) {
+  .static .p { padding-bottom: calc(var(--padB) + var(--sb) + 12px); }
+  .static .thanks p { font-size: clamp(20px, 6vw, 28px); }
+}
+@media (max-height: 540px) {
+  .static .thanks { padding-top: var(--hdr); padding-bottom: calc(18px + var(--sb)); }
+}
+
+/* ===================== 11. Reduced motion ===================== */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .cue i, .heart, .orb, .rings svg { animation: none; }
   .top, .rings, .dust, .orb, .toast, .icons a, .icons button, strong::after, .grade::before, .vals li::before, .ach li::before { transition: none; }
   .rings svg { opacity: .08; }
+  .mob .rv { opacity: 1; transform: none; transition: none; }
 }

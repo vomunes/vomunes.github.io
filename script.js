@@ -1,10 +1,11 @@
 /* Khi Tuổi Trẻ Còn Đang Viết — script.js
-   Cuộn dọc → hành trình ngang (GSAP + ScrollTrigger), có fallback cuộn ngang gốc.
+   Desktop: cuộn dọc → hành trình ngang (GSAP + ScrollTrigger).
+   Điện thoại / tablet / reduced-motion / GSAP lỗi: cuộn ngang gốc (staticMode) + reveal nhẹ bằng IntersectionObserver.
 
    Mục lục:
    1 DOM cache · 2 thiết bị & tier · 3 state · 4 liên hệ (toast/copy) · 5 chia section theo chiều cao
-   6 trang/nhãn/tiến trình · 7 chế độ tĩnh (fallback) · 8 chế độ GSAP: đo đạc, controller ngang, focus,
-   hero intro, loader, reveal, đếm số, gõ code, trái tim, bụi, resize, dọn dẹp · 9 khởi động */
+   6 trang/nhãn/tiến trình · 7 chế độ tĩnh (mobile) + reveal · 8 chế độ GSAP (desktop): đo đạc, controller ngang,
+   focus, hero intro, loader, reveal, đếm số, gõ code, trái tim, bụi, resize, dọn dẹp · 9 khởi động */
 (() => {
   "use strict";
 
@@ -123,8 +124,39 @@
     else { root.style.setProperty("--w1", t[1]); root.style.setProperty("--w2", t[2]); }
   };
 
-  /* ---------- 7. Chế độ tĩnh: reduced-motion hoặc GSAP không tải được ----------
-     Hành trình ngang bằng cuộn ngang gốc (vuốt / bánh xe / thanh cuộn). Nội dung luôn hiển thị. */
+  /* ---------- 7. Chế độ tĩnh (mobile / tablet / reduced-motion / GSAP lỗi) ----------
+     Hành trình ngang bằng cuộn ngang gốc (vuốt / bánh xe / thanh cuộn). Nội dung luôn hiển thị.
+     Không pin, không scrub: không có dead zone, không lệch đáy khi thanh địa chỉ co giãn. */
+  const reduceMq = matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* Reveal nhẹ bằng IntersectionObserver. Chạm đáy hành trình thì bắt buộc hiện toàn bộ màn "Cảm ơn". */
+  const mobileReveal = world => {
+    if (reduceMq.matches || !("IntersectionObserver" in window)) return noop;
+    const all = $$(".rv");
+    pages.forEach(p => $$(".rv", p).forEach((e, i) => e.style.setProperty("--i", Math.min(i, 6))));
+    root.classList.add("mob");
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+    }), { root: world, threshold: .12 });
+    all.forEach(e => io.observe(e));
+    const thanks = $$(".thanks .rv");
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      if (world.scrollLeft + world.clientWidth >= world.scrollWidth - 8) thanks.forEach(e => e.classList.add("in"));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(check); };
+    world.addEventListener("scroll", onScroll, { passive: true });
+    check();
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      world.removeEventListener("scroll", onScroll);
+      root.classList.remove("mob");
+      all.forEach(e => { e.classList.remove("in"); e.style.removeProperty("--i"); });
+    };
+  };
+
   const staticMode = () => {
     root.classList.remove("ld", "ldgo", "lock", "fx", "rev");
     root.classList.add("static");
@@ -150,30 +182,37 @@
       world.scrollLeft += e.deltaY * (e.deltaMode === 1 ? 32 : 1);
       e.preventDefault();
     };
+    /* Resize / xoay màn hình / visualViewport: debounce, chỉ đo lại khi đổi đáng kể.
+       Chiều cao #world là svh nên thanh địa chỉ co giãn không làm lệch đáy. */
     const onResize = () => {
       clearTimeout(rt);
       rt = setTimeout(() => {
-        if (Math.abs(innerWidth - lastW) < 24 && Math.abs(innerHeight - lastH) < (touch ? 140 : 24)) return;
-        lastW = innerWidth; lastH = innerHeight; fitSections(); update();
+        const vv = window.visualViewport, w = vv ? vv.width : innerWidth, h = vv ? vv.height : innerHeight;
+        if (Math.abs(w - lastW) < 24 && Math.abs(h - lastH) < (touch ? 140 : 24)) return;
+        lastW = w; lastH = h; fitSections(); update();
       }, 220);
     };
     world.addEventListener("scroll", onScroll, { passive: true });
     world.addEventListener("wheel", onWheel, { passive: false });
     addEventListener("resize", onResize);
     addEventListener("orientationchange", onResize);
+    if (window.visualViewport) visualViewport.addEventListener("resize", onResize);
     fitSections();
+    const stopReveal = mobileReveal(world);
     update();
     return () => {
       clearTimeout(rt); cancelAnimationFrame(raf);
+      stopReveal();
       world.removeEventListener("scroll", onScroll);
       world.removeEventListener("wheel", onWheel);
       removeEventListener("resize", onResize);
       removeEventListener("orientationchange", onResize);
+      if (window.visualViewport) visualViewport.removeEventListener("resize", onResize);
       root.classList.remove("static");
     };
   };
 
-  /* ---------- 8. Chế độ đầy đủ: GSAP + ScrollTrigger ---------- */
+  /* ---------- 8. Chế độ đầy đủ (desktop): GSAP + ScrollTrigger ---------- */
   const motion = () => {
     const { world, track } = dom;
     if (!world || !track || !pages.length) return staticMode();
@@ -440,7 +479,7 @@
         introTl.play(0);
       };
 
-      /* --- Loader mới: điểm → nét → TV/TRẦN VINH → tiêu đề → 00…100 → nét quét → mở màn clip-path --- */
+      /* --- Loader: điểm → nét → TV/TRẦN VINH → tiêu đề → 00…100 → nét quét → mở màn clip-path --- */
       const runLoader = () => {
         if (dead) return;
         if (!root.classList.contains("ld") || !dom.loader) { startIntro(); return; }
@@ -490,7 +529,7 @@
       const soft = () => { clearTimeout(rt); rt = setTimeout(() => { if (!dead) ScrollTrigger.refresh(); }, 160); };
       if (document.fonts) { document.fonts.ready.then(soft); on(document.fonts, "loadingdone", soft); }
 
-      /* Resize / xoay màn hình: chỉ refresh khi thay đổi đáng kể (thanh địa chỉ mobile không tính) */
+      /* Resize / xoay màn hình: chỉ refresh khi thay đổi đáng kể */
       const onResize = () => {
         clearTimeout(rt);
         rt = setTimeout(() => {
@@ -533,8 +572,9 @@
     /* Không để ScrollTrigger tự refresh theo resize: ta tự xử lý (debounce + ngưỡng) để Safari mobile không giật */
     ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: "visibilitychange,DOMContentLoaded,load" });
     const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", motion);
-    mm.add("(prefers-reduced-motion: reduce)", staticMode);
+    /* Desktop (màn lớn + chuột, không reduced-motion): pin + cinematic. Còn lại: cuộn ngang gốc. Hai điều kiện loại trừ nhau. */
+    mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (hover: hover)", motion);
+    mm.add("(prefers-reduced-motion: reduce), (max-width: 1023.98px), (hover: none)", staticMode);
   };
 
   withGsap().then(ok => (ok ? boot() : staticMode())).catch(() => staticMode());
